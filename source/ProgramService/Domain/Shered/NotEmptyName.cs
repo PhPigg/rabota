@@ -2,19 +2,19 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Domain.LocationContext.ValueObjects;
-public class LocationName
+namespace Domain.Shered;
+public class NotEmptyName
 {
     public const int MinLength = 3;
     public const int MaxLenght = 128;
 
     public string Value { get; }
 
-    private LocationName(string value)
+    private NotEmptyName(string value)
     {
         Value = value; 
     }
-    public static LocationName Create(string value)
+    public static NotEmptyName Create(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
             throw new ArgumentException($"Название локации не может быть пустым.", nameof(value));
@@ -23,6 +23,6 @@ public class LocationName
         if (value.Length < MinLength)
             throw new ArgumentException($"Название локации должно быть от {MinLength} до {MaxLenght} символов.", nameof(value));
 
-        return new LocationName(value);
+        return new NotEmptyName(value);
     }
 }

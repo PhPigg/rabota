@@ -1,54 +1,12 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "E:\\git project\\source\\ProgramService\\",
-  "Documents": [
-    {
-      "AbsoluteMoniker": "D:0:0:{1FA0AEE9-F175-4C3A-9112-5340CA27445F}|Domain\\Domain.csproj|e:\\git project\\source\\programservice\\domain\\locationcontext\\location.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1FA0AEE9-F175-4C3A-9112-5340CA27445F}|Domain\\Domain.csproj|solutionrelative:domain\\locationcontext\\location.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1FA0AEE9-F175-4C3A-9112-5340CA27445F}|Domain\\Domain.csproj|e:\\git project\\source\\programservice\\domain\\locationcontext\\valueobjects\\locationaddress.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1FA0AEE9-F175-4C3A-9112-5340CA27445F}|Domain\\Domain.csproj|solutionrelative:domain\\locationcontext\\valueobjects\\locationaddress.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    }
-  ],
+  "Documents": [],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
       "VerticalTabListWidth": 256,
-      "DocumentGroups": [
-        {
-          "DockedWidth": 200,
-          "SelectedChildIndex": 1,
-          "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "LocationAddress.cs",
-              "DocumentMoniker": "E:\\git project\\source\\ProgramService\\Domain\\LocationContext\\ValueObjects\\LocationAddress.cs",
-              "RelativeDocumentMoniker": "Domain\\LocationContext\\ValueObjects\\LocationAddress.cs",
-              "ToolTip": "E:\\git project\\source\\ProgramService\\Domain\\LocationContext\\ValueObjects\\LocationAddress.cs",
-              "RelativeToolTip": "Domain\\LocationContext\\ValueObjects\\LocationAddress.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAqwAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-21T03:04:58.765Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Location.cs",
-              "DocumentMoniker": "E:\\git project\\source\\ProgramService\\Domain\\LocationContext\\Location.cs",
-              "RelativeDocumentMoniker": "Domain\\LocationContext\\Location.cs",
-              "ToolTip": "E:\\git project\\source\\ProgramService\\Domain\\LocationContext\\Location.cs",
-              "RelativeToolTip": "Domain\\LocationContext\\Location.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-21T03:04:35.334Z",
-              "EditorCaption": ""
-            }
-          ]
-        }
-      ]
+      "DocumentGroups": []
     }
   ]
 }

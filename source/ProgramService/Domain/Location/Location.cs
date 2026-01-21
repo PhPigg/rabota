@@ -1,8 +1,9 @@
 ﻿using Domain.LocationContext.ValueObjects;
+using Domain.Shered;
 
 public class Location
 {
-    public Location(LocationId id, LocationName name, LocationAddress address, EntityLifeTime lifeTime, IanaTimeZone timeZone)
+    public Location(LocationId id, NotEmptyName name, LocationAddress address, EntityLifeTime lifeTime, IanaTimeZone timeZone)
     {
         Id = id;
         Name = name;
@@ -11,7 +12,7 @@ public class Location
         TimeZone = timeZone;
     }
     public LocationId Id { get; }
-    public LocationName Name { get; }
+    public NotEmptyName Name { get; }
     public LocationAddress Address { get; }
     public EntityLifeTime LifeTime { get; }
     public IanaTimeZone TimeZone { get; }
