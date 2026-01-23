@@ -4,7 +4,7 @@
     public DateTime UpdatedAt { get; }
     public bool IsActive { get; }
 
-    public EntityLifeTime(DateTime createdAt, DateTime updatedAt, bool isActive)
+    private EntityLifeTime(DateTime createdAt, DateTime updatedAt, bool isActive)
     {
         CreatedAt = createdAt;
         UpdatedAt = updatedAt;
