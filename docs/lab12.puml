@@ -1,0 +1,34 @@
+@startuml
+
+' Акторы
+actor "Администратор" as Admin
+
+' Варианты использования
+
+' Варианты использования, которые будут применены как дополнительные.
+usecase "Создать подразделение" as CR_P
+usecase "Деактивация" as DE_A
+usecase "Временная зона" as Time_Zone
+usecase "Подразделение" as Pod_Z
+usecase "Определить корневой или некорневой" as KOR_N
+usecase "Проверка на уникальность" as PR_Y
+usecase "Статус" as Status
+usecase "Создать псевдоним" as User_Name
+usecase "Выбрать подразделение" as Select
+
+' Связи актёров с вариантами использования
+Admin -- CR_P
+Admin -- DE_A
+
+' Детализация процесса оформления заказа (INCLUDE-связи) - обязательные связи - то что включается в процесс
+CR_P --> Time_Zone : <<include>>
+CR_P --> KOR_N : <<include>>
+CR_P --> PR_Y : <<include>>
+CR_P --> Status : <<include>>
+CR_P --> User_Name : <<include>>
+DE_A --> Select: <<include>>
+
+' EXTEND-связи (опциональные действия) - дополнительные действия, которые могут быть выполнены
+CR_P <.. Pod_Z : <<extend>>
+
+@enduml
