@@ -2,7 +2,7 @@
 using Domain.Shared;
 using Domain.Shered;
 
-namespace Domain.Position;
+namespace Domain.PositionsContext;
 
 /**
  * <summary>
@@ -10,18 +10,18 @@ namespace Domain.Position;
  * Объединяет идентификатор, наименование, описание и данные о жизненном цикле.
  * </summary>
  */
-public class PositionCs
+public class Position
 {
     /**
      * <summary>
-     * Инициализирует новый экземпляр класса <see cref="PositionCs"/>.
+     * Инициализирует новый экземпляр класса <see cref="Position"/>.
      * </summary>
      * <param name="id">Уникальный идентификатор должности.</param>
      * <param name="name">Валидное наименование должности.</param>
      * <param name="description">Детальное описание обязанностей или требований.</param>
      * <param name="lifeTime">Информация о времени создания и статусе активности.</param>
      */
-    public PositionCs(PositionId id, NotEmptyName name, PositionDescription description, EntityLifeTime lifeTime)
+    public Position(PositionId id, NotEmptyName name, PositionDescription description, EntityLifeTime lifeTime)
     {
         Id = id;
         Name = name;

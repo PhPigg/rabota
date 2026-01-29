@@ -5,7 +5,7 @@
  * Представляет уровень вложенности подразделения в иерархии (Value Object).
  * </summary>
  */
-public class DepartmentDepth
+public record DepartmentDepth
 {
     /** <summary>Возвращает числовое значение глубины вложенности.</summary> */
     public short Value { get; }

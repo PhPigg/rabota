@@ -6,7 +6,7 @@
  * Гарантирует, что идентификатор всегда является валидным и не пустым.
  * </summary>
  */
-public class PositionId
+public record PositionId
 {
     /** <summary>Возвращает внутреннее значение GUID.</summary> */
     public Guid Value { get; }

@@ -6,7 +6,7 @@
  * Обеспечивает базовую валидацию структуры идентификатора временной зоны.
  * </summary>
  */
-public class IanaTimeZone
+public record IanaTimeZone
 {
     /** <summary>Возвращает строковое значение часового пояса.</summary> */
     public string Value { get; }

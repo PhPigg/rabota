@@ -6,7 +6,7 @@
  * Используется для визуализации структуры и навигации по дереву отделов.
  * </summary>
  */
-public class DepartmentPath
+public record DepartmentPath
 {
     /** <summary>Возвращает строковое представление пути.</summary> */
     public string Value { get; }

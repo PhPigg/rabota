@@ -6,7 +6,7 @@
  * Гарантирует, что строка не является пустой и не превышает допустимый лимит символов.
  * </summary>
  */
-public class PositionDescription
+public record PositionDescription
 {
     /** <summary>Максимально допустимая длина описания.</summary> */
     public const int MaxLength = 500;

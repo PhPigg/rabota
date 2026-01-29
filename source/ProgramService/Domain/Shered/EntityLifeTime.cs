@@ -5,7 +5,7 @@
  * Представляет неизменяемую структуру данных для отслеживания временных меток жизненного цикла сущности.
  * </summary>
  */
-public sealed class EntityLifeTime
+public sealed record EntityLifeTime
 {
     /**
      * <summary>

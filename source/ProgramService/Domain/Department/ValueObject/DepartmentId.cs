@@ -6,7 +6,7 @@
  * Обеспечивает строгую типизацию и гарантирует валидность системного идентификатора.
  * </summary>
  */
-public class DepartmentId
+public record DepartmentId
 {
     /** <summary>Возвращает внутреннее значение GUID.</summary> */
     public Guid Value { get; }

@@ -6,7 +6,7 @@
  * Обеспечивает форматирование адреса через запятую и предоставляет доступ к отдельным компонентам.
  * </summary>
  */
-public class LocationAddress
+public record LocationAddress
 {
     /** <summary>Внутренний список частей адреса.</summary> */
     private readonly List<string> _addressParts;

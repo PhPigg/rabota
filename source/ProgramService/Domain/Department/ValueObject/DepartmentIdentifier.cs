@@ -6,7 +6,7 @@
  * Гарантирует, что значение состоит только из латинских символов.
  * </summary>
  */
-public class DepartmentIdentifier
+public record DepartmentIdentifier
 {
     /** <summary>Возвращает строковое значение псевдонима.</summary> */
     public string Value { get; }

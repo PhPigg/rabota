@@ -9,6 +9,7 @@
 
 # User-specific files
 *.rsuser
+*.dat
 *.suo
 *.user
 *.userosscache
