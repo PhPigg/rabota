@@ -1,6 +1,5 @@
-﻿using Domain.Position.ValueObjects;
+﻿using Domain.PositionsContext.ValueObjects;
 using Domain.Shared;
-using Domain.Shered;
 
 namespace Domain.PositionsContext;
 

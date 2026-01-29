@@ -1,4 +1,4 @@
-﻿namespace Domain.Department.ValueObject;
+﻿namespace Domain.DepartmentContext.ValueObject;
 
 /**
  * <summary>

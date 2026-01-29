@@ -1,6 +1,5 @@
 ﻿using Domain.LocationContext.ValueObjects;
 using Domain.Shared;
-using Domain.Shered;
 
 namespace Domain.LocationContext;
 

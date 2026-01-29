@@ -1,8 +1,7 @@
-﻿using Domain.Department.ValueObject;
+﻿using Domain.DepartmentContext.ValueObject;
 using Domain.Shared;
-using Domain.Shered;
 
-namespace Domain.Department;
+namespace Domain.DepartmentContext;
 
 /**
  * <summary>
@@ -10,7 +9,7 @@ namespace Domain.Department;
  * Описывает структуру организационной единицы, включая иерархические связи и метаданные.
  * </summary>
  */
-public class DepartmentCs
+public class Department
 {
     /**
      * <summary>
@@ -24,7 +23,7 @@ public class DepartmentCs
      * <param name="depth">Уровень вложенности в иерархии.</param>
      * <param name="lifeTime">Сведения о времени создания, обновления и статусе активности.</param>
      */
-    public DepartmentCs(
+    public Department(
         DepartmentId id,
         DepartmentId parentId,
         NotEmptyName name,

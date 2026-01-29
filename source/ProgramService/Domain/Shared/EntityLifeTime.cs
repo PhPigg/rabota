@@ -1,4 +1,4 @@
-﻿namespace Domain.Shered;
+﻿namespace Domain.Shared;
 
 /**
  * <summary>
@@ -78,5 +78,16 @@ public sealed record EntityLifeTime
         return new EntityLifeTime(createdAt, updatedAt, isActive);
     }
 
-    internal static EntityLifeTime CreateInitial() => throw new NotImplementedException();
+    /**
+     * <summary>
+     * Создает начальное состояние жизненного цикла для новой сущности.
+     * </summary>
+     * <returns>Экземпляр с текущим временем в качестве даты создания/обновления и статусом IsActive = true.</returns>
+     */
+    public static EntityLifeTime CreateInitial()
+    {
+        /* Используем UtcNow для предотвращения проблем с часовыми поясами */
+        DateTime now = DateTime.UtcNow;
+        return new EntityLifeTime(now, now, true);
+    }
 }

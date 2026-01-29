@@ -1,4 +1,4 @@
-﻿namespace Domain.Position.ValueObjects;
+﻿namespace Domain.PositionsContext.ValueObjects;
 
 /**
  * <summary>
