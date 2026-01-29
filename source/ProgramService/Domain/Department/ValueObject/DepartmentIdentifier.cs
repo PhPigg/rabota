@@ -1,26 +1,53 @@
-﻿using Domain.Shered;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace Domain.Department.ValueObject;
 
-namespace Domain.Department.ValueObject
+/**
+ * <summary>
+ * Представляет уникальный бизнес-идентификатор (псевдоним) подразделения.
+ * Гарантирует, что значение состоит только из латинских символов.
+ * </summary>
+ */
+public class DepartmentIdentifier
 {
-    public class DepartmentIdentifier
+    /** <summary>Возвращает строковое значение псевдонима.</summary> */
+    public string Value { get; }
+
+    /**
+     * <summary>
+     * Инициализирует новый экземпляр класса <see cref="DepartmentIdentifier"/>.
+     * </summary>
+     * <param name="value">Валидное латинское значение.</param>
+     */
+    private DepartmentIdentifier(string value)
     {
-        public string Value { get; }
-        private DepartmentIdentifier(string value)
+        Value = value;
+    }
+
+    /**
+     * <summary>
+     * Создает экземпляр <see cref="DepartmentIdentifier"/> с валидацией символов.
+     * </summary>
+     * <param name="value">Строка, содержащая только латинские буквы.</param>
+     * <returns>Новый объект <see cref="DepartmentIdentifier"/>.</returns>
+     * <exception cref="ArgumentException">Выбрасывается, если строка пуста или содержит нелатинские символы.</exception>
+     */
+    public static DepartmentIdentifier Create(string value)
+    {
+        /* Проверка на пустую строку или пробелы */
+        if (string.IsNullOrWhiteSpace(value))
         {
-            Value = value;
+            throw new ArgumentException("Название псевдонима не может быть пустым.", nameof(value));
         }
-        public static DepartmentIdentifier Create(string value)
+
+        /* Исправленная логика: проверяем, что каждый символ является латинской буквой.
+           Используем char.IsBetween или стандартную проверку диапазонов A-Z и a-z.
+        */
+        bool isOnlyLatin = value.All(x => (x >= 'A' && x <= 'Z') || (x >= 'a' && x <= 'z'));
+
+        if (!isOnlyLatin)
         {
-            if (string.IsNullOrWhiteSpace(value))
-                throw new ArgumentException($"Название псевдонима не может быть пустым.", nameof(value));
-            if (value.Any(x=>x<'A' || x < 'a'))
-                throw new ArgumentException("Название псевдонима только латиницой.", nameof(value));
-            if (value.Any(x => x > 'Z' || x > 'z'))
-                throw new ArgumentException("Название псевдонима только латиницой.", nameof(value));
-            return new DepartmentIdentifier(value);
+            throw new ArgumentException("Название псевдонима должно содержать только латинские буквы.", nameof(value));
         }
+
+        return new DepartmentIdentifier(value);
     }
 }

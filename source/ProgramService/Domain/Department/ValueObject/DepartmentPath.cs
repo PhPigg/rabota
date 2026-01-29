@@ -1,23 +1,43 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace Domain.Department.ValueObject;
 
-namespace Domain.Department.ValueObject
+/**
+ * <summary>
+ * Представляет иерархический путь подразделения (например, "Головной офис/IT/Разработка").
+ * Используется для визуализации структуры и навигации по дереву отделов.
+ * </summary>
+ */
+public class DepartmentPath
 {
-    public class DepartmentPath
+    /** <summary>Возвращает строковое представление пути.</summary> */
+    public string Value { get; }
+
+    /**
+     * <summary>
+     * Инициализирует новый экземпляр класса <see cref="DepartmentPath"/>.
+     * </summary>
+     * <param name="value">Валидная строка пути.</param>
+     */
+    private DepartmentPath(string value)
     {
-        public string Value { get; }
-        private DepartmentPath(string value)
+        Value = value;
+    }
+
+    /**
+     * <summary>
+     * Создает экземпляр пути после проверки входных данных.
+     * </summary>
+     * <param name="value">Строка, представляющая путь подразделения.</param>
+     * <returns>Новый объект <see cref="DepartmentPath"/>.</returns>
+     * <exception cref="ArgumentException">Выбрасывается, если строка пуста или содержит только пробелы.</exception>
+     */
+    public static DepartmentPath Create(string value)
+    {
+        /* Проверка на пустую строку или наличие только пробельных символов */
+        if (string.IsNullOrWhiteSpace(value))
         {
-            Value = value;
+            throw new ArgumentException("Путь не может быть пустым или состоять из пробелов.", nameof(value));
         }
-        public static DepartmentPath Create(string value)
-        {
-            if (value == string.Empty)
-            {
-                throw new ArgumentException("Путь не может быть пустым.", nameof(value));
-            }
-            return new DepartmentPath(value);
-        }
+
+        return new DepartmentPath(value);
     }
 }

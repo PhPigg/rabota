@@ -12,14 +12,17 @@ namespace Domain.LocationContext.ValueObjects
         {
             Value = value;
         }
+
         public static LocationId Create(Guid value)
         {
             if (value == Guid.Empty)
             {
                 throw new ArgumentException("Идентификатор не может быть пустым.", nameof(value));
             }
-            
+
             return new LocationId(value);
         }
+
+        internal static LocationId CreateNew() => throw new NotImplementedException();
     }
 }

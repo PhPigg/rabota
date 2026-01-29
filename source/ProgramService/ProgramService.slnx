@@ -1,4 +1,3 @@
 <Solution>
-  <Project Path="ConsoleApp1/ConsoleApp1.csproj" Id="6a6a1873-9f93-455c-a25e-b20fcacd7030" />
   <Project Path="Domain/Domain.csproj" Id="1fa0aee9-f175-4c3a-9112-5340ca27445f" />
 </Solution>
