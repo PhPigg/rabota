@@ -6,7 +6,7 @@
  * Гарантирует целостность ссылки на сущность Location.
  * </summary>
  */
-public class LocationId
+public record LocationId
 {
     /** <summary>Возвращает внутреннее значение Guid.</summary> */
     public Guid Value { get; }
