@@ -21,6 +21,11 @@ public sealed record EntityLifeTime
      */
     public DateTime? UpdatedAt { get; }
 
+    /**
+    * <summary>
+    * Получает дату и время удаления сущности.
+    * </summary>
+    */
     public DateTime? DeletedAt { get; }
 
     /**
@@ -62,7 +67,7 @@ public sealed record EntityLifeTime
      * Выбрасывается, если переданы некорректные даты или нарушена хронология.
      * </exception>
      */
-    public static EntityLifeTime Create(DateTime createdAt, DateTime updatedAt, bool isActive)
+    public static EntityLifeTime Create(DateTime createdAt, DateTime updatedAt, DateTime deletedAt, bool isActive)
     {
         /* Проверка на допустимый диапазон дат для создания */
         if (createdAt == DateTime.MinValue || createdAt == DateTime.MaxValue)
@@ -82,7 +87,7 @@ public sealed record EntityLifeTime
             throw new ArgumentException("Дата обновления не может быть меньше даты создания.", nameof(updatedAt));
         }
 
-        return new EntityLifeTime(createdAt, updatedAt, isActive);
+        return new EntityLifeTime(createdAt, updatedAt, deletedAt, isActive);
     }
 
     /**
