@@ -40,16 +40,16 @@ public class Location
     public LocationId Id { get; }
 
     /** <summary>Получает наименование локации.</summary> */
-    public NotEmptyName Name { get; }
+    public NotEmptyName Name { get; set; }
 
     /** <summary>Получает физический адрес локации.</summary> */
-    public LocationAddress Address { get; }
+    public LocationAddress Address { get; set; }
 
     /** <summary>Получает данные о жизненном цикле сущности.</summary> */
-    public EntityLifeTime LifeTime { get; }
+    public EntityLifeTime LifeTime { get; set; }
 
     /** <summary>Получает часовой пояс локации.</summary> */
-    public IanaTimeZone TimeZone { get; }
+    public IanaTimeZone TimeZone { get; set; }
 
     /**
      * <summary>
@@ -71,4 +71,49 @@ public class Location
         /* Возвращаем новый объект, соблюдая порядок аргументов конструктора */
         return new Location(id, name, address, lifeTime, timeZone);
     }
+    
+    
+    //изменение название локации, IANA, адреса локации
+    
+
+   
+
+    public interface LocationAddressUniquenessCriteria
+    {
+        bool IsSatisfiedBy(LocationAddress Address);
+    }
+
+    public interface LocationNameUniquenessCriteria
+    {
+        bool IsSatisfiedBy(NotEmptyName Name);
+    }
+
+    //метод изменения региона
+    public void ChangeIanaTimeZone(IanaTimeZone other)
+    {
+        TimeZone = other;
+    }
+
+    //метод изменения имени локации
+    public void ChangeLocationName(LocationNameUniquenessCriteria criteria, NotEmptyName other)
+    {
+        if (!criteria.IsSatisfiedBy(other))
+        {
+            throw new InvalidOperationException("Название локации уже используется.");
+        }
+
+        Name = other;
+    }
+
+    //метод изменения адреса локации
+    public void ChangeLocationAddress(LocationAddressUniquenessCriteria criteria, LocationAddress other)
+    {
+        if (!criteria.IsSatisfiedBy(other))
+        {
+            throw new InvalidOperationException("Адрес локации уже используется.");
+        }
+
+        Address = other;
+    }
+
 }

@@ -19,7 +19,9 @@ public sealed record EntityLifeTime
      * Получает дату и время последнего обновления сущности.
      * </summary>
      */
-    public DateTime UpdatedAt { get; }
+    public DateTime? UpdatedAt { get; }
+
+    public DateTime? DeletedAt { get; }
 
     /**
      * <summary>
@@ -36,10 +38,15 @@ public sealed record EntityLifeTime
      * <param name="updatedAt">Временная метка последнего изменения.</param>
      * <param name="isActive">Текущий статус активности.</param>
      */
-    private EntityLifeTime(DateTime createdAt, DateTime updatedAt, bool isActive)
+    private EntityLifeTime(
+        DateTime createdAt, 
+        DateTime? updatedAt = null,
+        DateTime? deletedAt = null,
+        bool isActive = true)
     {
         CreatedAt = createdAt;
         UpdatedAt = updatedAt;
+        DeletedAt = deletedAt;
         IsActive = isActive;
     }
 
@@ -88,6 +95,12 @@ public sealed record EntityLifeTime
     {
         /* Используем UtcNow для предотвращения проблем с часовыми поясами */
         DateTime now = DateTime.UtcNow;
-        return new EntityLifeTime(now, now, true);
+        return new EntityLifeTime(now, now, null, true);
+    }
+
+    public EntityLifeTime Update()
+    {
+        DateTime now = DateTime.UtcNow;
+        return new(CreatedAt, now, DeletedAt, IsActive);
     }
 }
