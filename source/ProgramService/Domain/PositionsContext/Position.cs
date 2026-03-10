@@ -1,5 +1,8 @@
-﻿using Domain.PositionsContext.ValueObjects;
+﻿using Domain.LocationContext.ValueObjects;
+using Domain.PositionsContext.ValueObjects;
 using Domain.Shared;
+using System.Net;
+using static Domain.LocationContext.Location;
 
 namespace Domain.PositionsContext;
 
@@ -33,26 +36,41 @@ public class Position
      * Получает уникальный идентификатор данной должности.
      * </summary>
      */
-    public PositionId Id { get; }
+    public PositionId Id { get; set; }
 
     /**
      * <summary>
      * Получает объект-значение, содержащий название должности.
      * </summary>
      */
-    public NotEmptyName Name { get; }
+    public NotEmptyName Name { get; set; }
 
     /**
      * <summary>
      * Получает описание должности (функциональные обязанности, требования).
      * </summary>
      */
-    public PositionDescription Description { get; }
+    public PositionDescription Description { get; set; }
 
     /**
      * <summary>
      * Получает информацию о временных метках и состоянии сущности.
      * </summary>
      */
-    public EntityLifeTime LifeTime { get; }
+    public EntityLifeTime LifeTime { get; set; }
+
+    public interface PositionNameUniquenessCriteria
+    {
+        bool IsSatisfiedBy(NotEmptyName Name);
+    }
+
+    public void ChangePositionName(PositionNameUniquenessCriteria criteria, NotEmptyName other)
+    {
+        if (!criteria.IsSatisfiedBy(other))
+        {
+            throw new InvalidOperationException("Название должности уже используется.");
+        }
+
+        Name = other;
+    }
 }
