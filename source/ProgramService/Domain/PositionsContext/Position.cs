@@ -1,4 +1,6 @@
-﻿using Domain.LocationContext.ValueObjects;
+﻿using Domain.DepartmentContext;
+using Domain.DepartmentContext.ValueObject;
+using Domain.LocationContext.ValueObjects;
 using Domain.PositionsContext.ValueObjects;
 using Domain.Shared;
 using System.Net;
@@ -29,7 +31,7 @@ public class Position
      * <param name="description">Детальное описание обязанностей или требований.</param>
      * <param name="lifeTime">Информация о времени создания и статусе активности.</param>
      */
-    public Position(PositionId id, NotEmptyName name, PositionDescription description, EntityLifeTime lifeTime)
+    private Position(PositionId id, NotEmptyName name, PositionDescription description, EntityLifeTime lifeTime)
     {
         Id = id;
         Name = name;
@@ -76,5 +78,23 @@ public class Position
         }
 
         Name = other;
+    }
+
+    public static Position CreateNew(IPositionNameUniquenessCriteria criteria, NotEmptyName name, PositionDescription description)
+    {
+        //Проверка названия подразделения на уникальность
+        if (!criteria.IsSatisfiedBy(name))
+        {
+            throw new ArgumentException("Название должности уже существует.");
+        }
+
+        /* Генерация нового уникального идентификатора */
+        PositionId id = PositionId.CreateNew();
+
+        /* Инициализация начальных временных меток жизненного цикла */
+        EntityLifeTime lifeTime = EntityLifeTime.CreateInitial();
+
+        /* Возвращаем новый объект, соблюдая порядок аргументов конструктора */
+        return new Position(id, name, description, lifeTime);
     }
 }

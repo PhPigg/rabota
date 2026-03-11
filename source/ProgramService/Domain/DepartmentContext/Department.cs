@@ -32,7 +32,7 @@ public class Department
      * <param name="depth">Уровень вложенности в иерархии.</param>
      * <param name="lifeTime">Сведения о времени создания, обновления и статусе активности.</param>
      */
-    public Department(
+    private Department(
         DepartmentId id,
         DepartmentId parentId,
         NotEmptyName name,

@@ -28,7 +28,7 @@ public class Location
      * <param name="lifeTime">Сведения о жизненном цикле (создание, активность).</param>
      * <param name="timeZone">Часовой пояс в формате IANA.</param>
      */
-    public Location(
+    private Location(
         LocationId id,
         NotEmptyName name,
         LocationAddress address,
