@@ -6,6 +6,12 @@ using static Domain.LocationContext.Location;
 
 namespace Domain.PositionsContext;
 
+//интерфейс для уникальности названия
+public interface IPositionNameUniquenessCriteria
+{
+    bool IsSatisfiedBy(NotEmptyName Name);
+}
+
 /**
  * <summary>
  * Представляет доменную сущность "Должность" (Position).
@@ -59,12 +65,10 @@ public class Position
      */
     public EntityLifeTime LifeTime { get; set; }
 
-    public interface PositionNameUniquenessCriteria
-    {
-        bool IsSatisfiedBy(NotEmptyName Name);
-    }
+    
 
-    public void ChangePositionName(PositionNameUniquenessCriteria criteria, NotEmptyName other)
+    //метод для проверки уникальности названия
+    public void ChangePositionName(IPositionNameUniquenessCriteria criteria, NotEmptyName other)
     {
         if (!criteria.IsSatisfiedBy(other))
         {

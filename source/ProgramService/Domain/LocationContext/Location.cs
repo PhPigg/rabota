@@ -3,6 +3,13 @@ using Domain.Shared;
 
 namespace Domain.LocationContext;
 
+//интерфейс для уникальности названия локации
+public interface ILocationUniquenessCriteria
+{
+    bool IsSatisfiedBy(NotEmptyName Name);
+    bool IsSatisfiedBy(LocationAddress Address);
+}
+
 /**
  * <summary>
  * Представляет доменную сущность "Локация" (Location).
@@ -60,8 +67,20 @@ public class Location
      * <param name="name">Объект-значение имени.</param>
      * <returns>Новый экземпляр <see cref="Location"/>.</returns>
      */
-    public static Location CreateNew(LocationAddress address, IanaTimeZone timeZone, NotEmptyName name)
+    public static Location CreateNew(ILocationUniquenessCriteria criteria, LocationAddress address, IanaTimeZone timeZone, NotEmptyName name)
     {
+        //Проверка названия локации на уникальность
+        if (!criteria.IsSatisfiedBy(name))
+        {
+            throw new ArgumentException("Название локации уже существует.");
+        }
+
+        //Проверка адреса локации на уникальность
+        if (!criteria.IsSatisfiedBy(address))
+        {
+            throw new ArgumentException("Адрес локации уже существует.");
+        }
+
         /* Генерация нового уникального идентификатора */
         LocationId id = LocationId.CreateNew();
 
@@ -73,20 +92,10 @@ public class Location
     }
     
     
-    //изменение название локации, IANA, адреса локации
+    
     
 
-   
-
-    public interface LocationAddressUniquenessCriteria
-    {
-        bool IsSatisfiedBy(LocationAddress Address);
-    }
-
-    public interface LocationNameUniquenessCriteria
-    {
-        bool IsSatisfiedBy(NotEmptyName Name);
-    }
+  
 
     //метод изменения региона
     public void ChangeIanaTimeZone(IanaTimeZone other)
@@ -94,8 +103,8 @@ public class Location
         TimeZone = other;
     }
 
-    //метод изменения имени локации
-    public void ChangeLocationName(LocationNameUniquenessCriteria criteria, NotEmptyName other)
+    //метод изменения имени локации c учетом уникальности
+    public void ChangeLocationName(ILocationUniquenessCriteria criteria, NotEmptyName other)
     {
         if (!criteria.IsSatisfiedBy(other))
         {
@@ -105,8 +114,8 @@ public class Location
         Name = other;
     }
 
-    //метод изменения адреса локации
-    public void ChangeLocationAddress(LocationAddressUniquenessCriteria criteria, LocationAddress other)
+    //метод изменения адреса локации с учетом уникальности
+    public void ChangeLocationAddress(ILocationUniquenessCriteria criteria, LocationAddress other)
     {
         if (!criteria.IsSatisfiedBy(other))
         {

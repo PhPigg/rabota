@@ -1,7 +1,16 @@
 ﻿using Domain.DepartmentContext.ValueObject;
+using Domain.LocationContext;
+using Domain.LocationContext.ValueObjects;
 using Domain.Shared;
+using System.Net;
 
 namespace Domain.DepartmentContext;
+
+//интерфейс для уникальности названия подразделения
+public interface DepartmentUniqueeCriteria
+{
+    bool IsSatisfiedBy(NotEmptyName name);
+}
 
 /**
  * <summary>
@@ -30,7 +39,9 @@ public class Department
         DepartmentIdentifier identifier,
         DepartmentPath path,
         DepartmentDepth depth,
-        EntityLifeTime lifeTime
+        EntityLifeTime lifeTime,
+        IEnumerable<DepartmentLocation>? Locations = null,
+        IEnumerable<DepartmentPosition>? Positions = null
     )
     {
         Id = id;
@@ -40,6 +51,8 @@ public class Department
         Path = path;
         Depth = depth;
         LifeTime = lifeTime;
+        Locations = Locations is null ? [] : [.. Locations];
+        Positions = Positions is null ? [] : [.. Positions];
     }
 
     /**
@@ -61,7 +74,7 @@ public class Department
      * Получает наименование подразделения.
      * </summary>
      */
-    public NotEmptyName Name { get; }
+    public NotEmptyName Name { get; set; }
 
     /**
      * <summary>
@@ -90,4 +103,47 @@ public class Department
      * </summary>
      */
     public EntityLifeTime LifeTime { get; }
+
+    public List<DepartmentLocation> Locations { get; } = [];
+
+    public List<DepartmentPosition> Positions { get; } = [];
+
+    //интерфейс для уникальности названия подразделения
+    public interface DepartmentNameUniqueeCriteria
+    {
+        bool IsSatisfiedBy(NotEmptyName name);
+    }
+
+    //метод для создания названия подразделения с учетом уникальности
+    public void ChangeDepartmentName(DepartmentUniqueeCriteria criteria, NotEmptyName other)
+    {
+        if (!criteria.IsSatisfiedBy(other))
+        {
+            throw new ArgumentException("Название локации уже существует.");
+        }
+
+        Name = other;
+    }
+
+    public static Department CreateNew(DepartmentUniqueeCriteria criteria, DepartmentId id,
+        DepartmentId parentId,
+        NotEmptyName name,
+        DepartmentIdentifier identifier,
+        DepartmentPath path,
+        DepartmentDepth depth,
+        EntityLifeTime lifeTime,
+        IEnumerable<DepartmentLocation>? Locations = null,
+        IEnumerable<DepartmentPosition>? Positions = null)
+    {
+        //Проверка названия подразделения на уникальность
+        if (!criteria.IsSatisfiedBy(name))
+        {
+            throw new ArgumentException("Название локации уже существует.");
+        }
+
+        
+
+        /* Возвращаем новый объект, соблюдая порядок аргументов конструктора */
+        return new Department(id, parentId, name, identifier, path, depth, lifeTime, Locations, Positions);
+    }
 }
