@@ -1,4 +1,6 @@
-﻿namespace Domain.PositionsContext.ValueObjects;
+﻿using Domain.LocationContext.ValueObjects;
+
+namespace Domain.PositionsContext.ValueObjects;
 
 /**
  * <summary>
@@ -39,5 +41,17 @@ public record PositionId
         }
 
         return new PositionId(value);
+    }
+
+    /**
+     * <summary>
+     * Генерирует новый уникальный идентификатор для новой должности.
+     * </summary>
+     * <returns>Новый экземпляр <see cref="LocationId"/> с уникальным Guid.</returns>
+     */
+    public static PositionId CreateNew()
+    {
+        /* Создаем новый объект с использованием системного генератора Guid */
+        return new PositionId(Guid.NewGuid());
     }
 }
