@@ -1,6 +1,7 @@
 ﻿using Domain.DepartmentContext.ValueObject;
 using Domain.LocationContext;
 using Domain.LocationContext.ValueObjects;
+using Domain.PositionsContext;
 using Domain.Shared;
 using System.Net;
 
@@ -102,21 +103,21 @@ public class Department
      * Получает данные о жизненном цикле (создание, изменение, активность).
      * </summary>
      */
-    public EntityLifeTime LifeTime { get; }
+    public EntityLifeTime LifeTime { get; set; }
 
-    public List<DepartmentLocation> Locations { get; } = [];
+    private readonly List<Position> _positions;
 
-    public List<DepartmentPosition> Positions { get; } = [];
+    private readonly List<Location> _locations;
 
-    //интерфейс для уникальности названия подразделения
-    public interface DepartmentNameUniqueeCriteria
-    {
-        bool IsSatisfiedBy(NotEmptyName name);
-    }
+    public IReadOnlyList<Position> Positions => _positions.AsReadOnly();
+
+    public IReadOnlyList<Location> Locations => _locations.AsReadOnly();
 
     //метод для создания названия подразделения с учетом уникальности
     public void ChangeDepartmentName(DepartmentUniqueeCriteria criteria, NotEmptyName other)
     {
+
+        CheckForActive();
         if (!criteria.IsSatisfiedBy(other))
         {
             throw new ArgumentException("Название локации уже существует.");
@@ -145,5 +146,65 @@ public class Department
 
         /* Возвращаем новый объект, соблюдая порядок аргументов конструктора */
         return new Department(id, parentId, name, identifier, path, depth, lifeTime, Locations, Positions);
+    }
+
+
+
+    public void AddLocation(Location location)
+    {
+        CheckForActive();
+        UpDateTimeEdit();
+        foreach (Location existing in Locations)
+        {
+            if (existing.Name == location.Name)
+            {
+                throw new ArgumentException("Локация с таким названием уже существует в данном подразделении");
+            }
+            
+            if (existing.Address == location.Address)
+            {
+                throw new ArgumentException("Локация с таким адресом уже существует в данном подразделении");
+            }
+
+            if (existing.Id == location.Id)
+            {
+                throw new ArgumentException("Локация с таким идентификатором уже существует в данном подразделении");
+            }
+        }
+        _locations.Add(location);
+    }
+
+    public void AddPosition(Position position)
+    {
+        CheckForActive();
+        UpDateTimeEdit();
+        foreach (Position existing in Positions)
+        {
+            if (existing.Name == position.Name)
+            {
+                throw new ArgumentException("Должность с таким названием уже существует в данном подразделении");
+            }
+
+            
+
+            if (existing.Id == position.Id)
+            {
+                throw new ArgumentException("Должность с таким идентификатором уже существует в данном подразделении");
+            }
+        }
+        _positions.Add(position);
+    }
+
+    private void CheckForActive()
+    {
+        if (LifeTime.IsActive == false)
+        {
+            throw new ArgumentException("Сущность удалена");
+        }
+    }
+
+    private void UpDateTimeEdit()
+    {
+        LifeTime = LifeTime.Update();
     }
 }
