@@ -3,6 +3,7 @@ using Domain.LocationContext;
 using Domain.LocationContext.ValueObjects;
 using Domain.PositionsContext;
 using Domain.Shared;
+using System.Data;
 using System.Net;
 
 namespace Domain.DepartmentContext;
@@ -103,15 +104,17 @@ public class Department
      * Получает данные о жизненном цикле (создание, изменение, активность).
      * </summary>
      */
+    
     public EntityLifeTime LifeTime { get; set; }
 
-    private readonly List<Position> _positions;
-
-    private readonly List<Location> _locations;
-
-    public IReadOnlyList<Position> Positions => _positions.AsReadOnly();
-
-    public IReadOnlyList<Location> Locations => _locations.AsReadOnly();
+    //***************************************************
+    private readonly List<DepartmentPosition> _positions;
+    //***************************************************
+    private readonly List<DepartmentLocation> _locations;
+    //****************************************************************************
+    public IReadOnlyList<DepartmentPosition> Positions => _positions.AsReadOnly();
+    //****************************************************************************
+    public IReadOnlyList<DepartmentLocation> Locations => _locations.AsReadOnly();
 
     //метод для создания названия подразделения с учетом уникальности
     public void ChangeDepartmentName(DepartmentUniqueeCriteria criteria, NotEmptyName other)
@@ -122,7 +125,8 @@ public class Department
         {
             throw new ArgumentException("Название локации уже существует.");
         }
-
+        //обновление даты редактирования
+        UpDateTimeEdit();
         Name = other;
     }
 
@@ -144,6 +148,7 @@ public class Department
 
         
 
+
         /* Возвращаем новый объект, соблюдая порядок аргументов конструктора */
         return new Department(id, parentId, name, identifier, path, depth, lifeTime, Locations, Positions);
     }
@@ -153,7 +158,7 @@ public class Department
     public void AddLocation(Location location)
     {
         CheckForActive();
-        UpDateTimeEdit();
+        
         foreach (Location existing in Locations)
         {
             if (existing.Name == location.Name)
@@ -171,13 +176,14 @@ public class Department
                 throw new ArgumentException("Локация с таким идентификатором уже существует в данном подразделении");
             }
         }
+        UpDateTimeEdit();
         _locations.Add(location);
     }
 
     public void AddPosition(Position position)
     {
         CheckForActive();
-        UpDateTimeEdit();
+        
         foreach (Position existing in Positions)
         {
             if (existing.Name == position.Name)
@@ -192,6 +198,8 @@ public class Department
                 throw new ArgumentException("Должность с таким идентификатором уже существует в данном подразделении");
             }
         }
+
+        UpDateTimeEdit();
         _positions.Add(position);
     }
 

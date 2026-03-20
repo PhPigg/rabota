@@ -14,11 +14,11 @@ namespace Domain.DepartmentContext
             LocationId = location.Id;
         }
 
-        //департамент ответственный за локацию
+        //департамент, ответственный за локацию
         public DepartmentId DepartmentId { get; }
         public Department Department { get; }
         
-        //локация относящаяся к департаменту
+        //локация, относящаяся к департаменту
         public LocationId LocationId { get; }
         public Location Location { get; }
     }

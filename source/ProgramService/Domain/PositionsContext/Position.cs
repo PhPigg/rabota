@@ -72,12 +72,14 @@ public class Position
     //метод для проверки уникальности названия
     public void ChangePositionName(IPositionNameUniquenessCriteria criteria, NotEmptyName other)
     {
+        CheckForActive();   
         if (!criteria.IsSatisfiedBy(other))
         {
             throw new InvalidOperationException("Название должности уже используется.");
         }
 
         Name = other;
+        UpDateTimeEdit();
     }
 
     public static Position CreateNew(IPositionNameUniquenessCriteria criteria, NotEmptyName name, PositionDescription description)
@@ -96,5 +98,18 @@ public class Position
 
         /* Возвращаем новый объект, соблюдая порядок аргументов конструктора */
         return new Position(id, name, description, lifeTime);
+    }
+
+    private void CheckForActive()
+    {
+        if (LifeTime.IsActive == false)
+        {
+            throw new ArgumentException("Сущность удалена");
+        }
+    }
+
+    private void UpDateTimeEdit()
+    {
+        LifeTime = LifeTime.Update();
     }
 }

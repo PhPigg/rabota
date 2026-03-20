@@ -69,6 +69,8 @@ public class Location
      */
     public static Location CreateNew(ILocationUniquenessCriteria criteria, LocationAddress address, IanaTimeZone timeZone, NotEmptyName name)
     {
+        
+        
         //Проверка названия локации на уникальность
         if (!criteria.IsSatisfiedBy(name))
         {
@@ -100,29 +102,51 @@ public class Location
     //метод изменения региона
     public void ChangeIanaTimeZone(IanaTimeZone other)
     {
+        CheckForActive();
         TimeZone = other;
+        UpDateTimeEdit();
     }
 
     //метод изменения имени локации c учетом уникальности
     public void ChangeLocationName(ILocationUniquenessCriteria criteria, NotEmptyName other)
     {
+        CheckForActive();
+        
         if (!criteria.IsSatisfiedBy(other))
         {
             throw new InvalidOperationException("Название локации уже используется.");
         }
 
         Name = other;
+
+        UpDateTimeEdit();
     }
 
     //метод изменения адреса локации с учетом уникальности
     public void ChangeLocationAddress(ILocationUniquenessCriteria criteria, LocationAddress other)
     {
+        CheckForActive();
+        
         if (!criteria.IsSatisfiedBy(other))
         {
             throw new InvalidOperationException("Адрес локации уже используется.");
         }
 
         Address = other;
+        UpDateTimeEdit();
+    }
+
+    private void CheckForActive()
+    {
+        if (LifeTime.IsActive == false)
+        {
+            throw new ArgumentException("Сущность удалена");
+        }
+    }
+
+    private void UpDateTimeEdit()
+    {
+        LifeTime = LifeTime.Update();
     }
 
 }
