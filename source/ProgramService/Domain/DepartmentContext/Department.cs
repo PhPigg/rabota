@@ -1,7 +1,18 @@
 ﻿using Domain.DepartmentContext.ValueObject;
+using Domain.LocationContext;
+using Domain.LocationContext.ValueObjects;
+using Domain.PositionsContext;
 using Domain.Shared;
+using System.Data;
+using System.Net;
 
 namespace Domain.DepartmentContext;
+
+//интерфейс для уникальности названия подразделения
+public interface DepartmentUniqueeCriteria
+{
+    bool IsSatisfiedBy(NotEmptyName name);
+}
 
 /**
  * <summary>
@@ -23,14 +34,16 @@ public class Department
      * <param name="depth">Уровень вложенности в иерархии.</param>
      * <param name="lifeTime">Сведения о времени создания, обновления и статусе активности.</param>
      */
-    public Department(
+    private Department(
         DepartmentId id,
         DepartmentId parentId,
         NotEmptyName name,
         DepartmentIdentifier identifier,
         DepartmentPath path,
         DepartmentDepth depth,
-        EntityLifeTime lifeTime
+        EntityLifeTime lifeTime,
+        IEnumerable<DepartmentLocation>? Locations = null,
+        IEnumerable<DepartmentPosition>? Positions = null
     )
     {
         Id = id;
@@ -40,6 +53,8 @@ public class Department
         Path = path;
         Depth = depth;
         LifeTime = lifeTime;
+        Locations = Locations is null ? [] : [.. Locations];
+        Positions = Positions is null ? [] : [.. Positions];
     }
 
     /**
@@ -61,7 +76,7 @@ public class Department
      * Получает наименование подразделения.
      * </summary>
      */
-    public NotEmptyName Name { get; }
+    public NotEmptyName Name { get; set; }
 
     /**
      * <summary>
@@ -89,5 +104,115 @@ public class Department
      * Получает данные о жизненном цикле (создание, изменение, активность).
      * </summary>
      */
-    public EntityLifeTime LifeTime { get; }
+    
+    public EntityLifeTime LifeTime { get; set; }
+
+    //***************************************************
+    private readonly List<DepartmentPosition> _positions;
+    //***************************************************
+    private readonly List<DepartmentLocation> _locations;
+    //****************************************************************************
+    public IReadOnlyList<DepartmentPosition> Positions => _positions.AsReadOnly();
+    //****************************************************************************
+    public IReadOnlyList<DepartmentLocation> Locations => _locations.AsReadOnly();
+
+    //метод для создания названия подразделения с учетом уникальности
+    public void ChangeDepartmentName(DepartmentUniqueeCriteria criteria, NotEmptyName other)
+    {
+
+        CheckForActive();
+        if (!criteria.IsSatisfiedBy(other))
+        {
+            throw new ArgumentException("Название локации уже существует.");
+        }
+        //обновление даты редактирования
+        UpDateTimeEdit();
+        Name = other;
+    }
+
+    public static Department CreateNew(DepartmentUniqueeCriteria criteria, DepartmentId id,
+        DepartmentId parentId,
+        NotEmptyName name,
+        DepartmentIdentifier identifier,
+        DepartmentPath path,
+        DepartmentDepth depth,
+        EntityLifeTime lifeTime,
+        IEnumerable<DepartmentLocation>? Locations = null,
+        IEnumerable<DepartmentPosition>? Positions = null)
+    {
+        //Проверка названия подразделения на уникальность
+        if (!criteria.IsSatisfiedBy(name))
+        {
+            throw new ArgumentException("Название локации уже существует.");
+        }
+
+        
+
+
+        /* Возвращаем новый объект, соблюдая порядок аргументов конструктора */
+        return new Department(id, parentId, name, identifier, path, depth, lifeTime, Locations, Positions);
+    }
+
+
+
+    public void AddLocation(Location location)
+    {
+        CheckForActive();
+        
+        foreach (Location existing in Locations)
+        {
+            if (existing.Name == location.Name)
+            {
+                throw new ArgumentException("Локация с таким названием уже существует в данном подразделении");
+            }
+            
+            if (existing.Address == location.Address)
+            {
+                throw new ArgumentException("Локация с таким адресом уже существует в данном подразделении");
+            }
+
+            if (existing.Id == location.Id)
+            {
+                throw new ArgumentException("Локация с таким идентификатором уже существует в данном подразделении");
+            }
+        }
+        UpDateTimeEdit();
+        _locations.Add(location);
+    }
+
+    public void AddPosition(Position position)
+    {
+        CheckForActive();
+        
+        foreach (Position existing in Positions)
+        {
+            if (existing.Name == position.Name)
+            {
+                throw new ArgumentException("Должность с таким названием уже существует в данном подразделении");
+            }
+
+            
+
+            if (existing.Id == position.Id)
+            {
+                throw new ArgumentException("Должность с таким идентификатором уже существует в данном подразделении");
+            }
+        }
+
+        UpDateTimeEdit();
+        _positions.Add(position);
+    }
+
+    private void CheckForActive()
+    {
+        if (LifeTime.IsActive == false)
+        {
+            throw new ArgumentException("Сущность удалена");
+        }
+    }
+
+    private void UpDateTimeEdit()
+    {
+        LifeTime = LifeTime.Update();
+    }
 }

@@ -1,7 +1,18 @@
-﻿using Domain.PositionsContext.ValueObjects;
+﻿using Domain.DepartmentContext;
+using Domain.DepartmentContext.ValueObject;
+using Domain.LocationContext.ValueObjects;
+using Domain.PositionsContext.ValueObjects;
 using Domain.Shared;
+using System.Net;
+using static Domain.LocationContext.Location;
 
 namespace Domain.PositionsContext;
+
+//интерфейс для уникальности названия
+public interface IPositionNameUniquenessCriteria
+{
+    bool IsSatisfiedBy(NotEmptyName Name);
+}
 
 /**
  * <summary>
@@ -20,7 +31,7 @@ public class Position
      * <param name="description">Детальное описание обязанностей или требований.</param>
      * <param name="lifeTime">Информация о времени создания и статусе активности.</param>
      */
-    public Position(PositionId id, NotEmptyName name, PositionDescription description, EntityLifeTime lifeTime)
+    private Position(PositionId id, NotEmptyName name, PositionDescription description, EntityLifeTime lifeTime)
     {
         Id = id;
         Name = name;
@@ -33,26 +44,72 @@ public class Position
      * Получает уникальный идентификатор данной должности.
      * </summary>
      */
-    public PositionId Id { get; }
+    public PositionId Id { get; set; }
 
     /**
      * <summary>
      * Получает объект-значение, содержащий название должности.
      * </summary>
      */
-    public NotEmptyName Name { get; }
+    public NotEmptyName Name { get; set; }
 
     /**
      * <summary>
      * Получает описание должности (функциональные обязанности, требования).
      * </summary>
      */
-    public PositionDescription Description { get; }
+    public PositionDescription Description { get; set; }
 
     /**
      * <summary>
      * Получает информацию о временных метках и состоянии сущности.
      * </summary>
      */
-    public EntityLifeTime LifeTime { get; }
+    public EntityLifeTime LifeTime { get; set; }
+
+    
+
+    //метод для проверки уникальности названия
+    public void ChangePositionName(IPositionNameUniquenessCriteria criteria, NotEmptyName other)
+    {
+        CheckForActive();   
+        if (!criteria.IsSatisfiedBy(other))
+        {
+            throw new InvalidOperationException("Название должности уже используется.");
+        }
+
+        Name = other;
+        UpDateTimeEdit();
+    }
+
+    public static Position CreateNew(IPositionNameUniquenessCriteria criteria, NotEmptyName name, PositionDescription description)
+    {
+        //Проверка названия подразделения на уникальность
+        if (!criteria.IsSatisfiedBy(name))
+        {
+            throw new ArgumentException("Название должности уже существует.");
+        }
+
+        /* Генерация нового уникального идентификатора */
+        PositionId id = PositionId.CreateNew();
+
+        /* Инициализация начальных временных меток жизненного цикла */
+        EntityLifeTime lifeTime = EntityLifeTime.CreateInitial();
+
+        /* Возвращаем новый объект, соблюдая порядок аргументов конструктора */
+        return new Position(id, name, description, lifeTime);
+    }
+
+    private void CheckForActive()
+    {
+        if (LifeTime.IsActive == false)
+        {
+            throw new ArgumentException("Сущность удалена");
+        }
+    }
+
+    private void UpDateTimeEdit()
+    {
+        LifeTime = LifeTime.Update();
+    }
 }
