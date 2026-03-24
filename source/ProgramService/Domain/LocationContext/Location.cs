@@ -3,6 +3,12 @@ using Domain.Shared;
 
 namespace Domain.LocationContext;
 
+//интерфейс для активности сущности
+public interface ILifeTimeable
+{
+    EntityLifeTime LifeTime { get; set; }
+}
+
 //интерфейс для уникальности названия локации
 public interface ILocationUniquenessCriteria
 {
@@ -69,8 +75,6 @@ public class Location
      */
     public static Location CreateNew(ILocationUniquenessCriteria criteria, LocationAddress address, IanaTimeZone timeZone, NotEmptyName name)
     {
-        
-        
         //Проверка названия локации на уникальность
         if (!criteria.IsSatisfiedBy(name))
         {
@@ -93,16 +97,10 @@ public class Location
         return new Location(id, name, address, lifeTime, timeZone);
     }
     
-    
-    
-    
-
-  
-
     //метод изменения региона
     public void ChangeIanaTimeZone(IanaTimeZone other)
     {
-        CheckForActive();
+        ThrowIfNotActive();
         TimeZone = other;
         UpDateTimeEdit();
     }
@@ -110,7 +108,7 @@ public class Location
     //метод изменения имени локации c учетом уникальности
     public void ChangeLocationName(ILocationUniquenessCriteria criteria, NotEmptyName other)
     {
-        CheckForActive();
+        ThrowIfNotActive();
         
         if (!criteria.IsSatisfiedBy(other))
         {
@@ -125,7 +123,7 @@ public class Location
     //метод изменения адреса локации с учетом уникальности
     public void ChangeLocationAddress(ILocationUniquenessCriteria criteria, LocationAddress other)
     {
-        CheckForActive();
+        ThrowIfNotActive();
         
         if (!criteria.IsSatisfiedBy(other))
         {
@@ -136,13 +134,7 @@ public class Location
         UpDateTimeEdit();
     }
 
-    private void CheckForActive()
-    {
-        if (LifeTime.IsActive == false)
-        {
-            throw new ArgumentException("Сущность удалена");
-        }
-    }
+    
 
     private void UpDateTimeEdit()
     {

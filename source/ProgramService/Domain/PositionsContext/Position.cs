@@ -8,6 +8,12 @@ using static Domain.LocationContext.Location;
 
 namespace Domain.PositionsContext;
 
+//интерфейс для активности сущности
+public interface ILifeTimeable
+{
+    EntityLifeTime LifeTime { get; set; }
+}
+
 //интерфейс для уникальности названия
 public interface IPositionNameUniquenessCriteria
 {
@@ -72,7 +78,7 @@ public class Position
     //метод для проверки уникальности названия
     public void ChangePositionName(IPositionNameUniquenessCriteria criteria, NotEmptyName other)
     {
-        CheckForActive();   
+        ThrowIfNotActive();   
         if (!criteria.IsSatisfiedBy(other))
         {
             throw new InvalidOperationException("Название должности уже используется.");
@@ -100,13 +106,7 @@ public class Position
         return new Position(id, name, description, lifeTime);
     }
 
-    private void CheckForActive()
-    {
-        if (LifeTime.IsActive == false)
-        {
-            throw new ArgumentException("Сущность удалена");
-        }
-    }
+    
 
     private void UpDateTimeEdit()
     {

@@ -108,4 +108,6 @@ public sealed record EntityLifeTime
         DateTime now = DateTime.UtcNow;
         return new(CreatedAt, now, DeletedAt, IsActive);
     }
+
+    //метод для обновления
 }

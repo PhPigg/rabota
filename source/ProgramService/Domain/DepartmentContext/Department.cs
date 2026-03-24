@@ -9,6 +9,12 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace Domain.DepartmentContext;
 
+//интерфейс для активности сущности
+public interface ILifeTimeable
+{
+    EntityLifeTime LifeTime { get; set; }
+}
+
 //интерфейс для уникальности названия подразделения
 public interface DepartmentUniqueeCriteria
 {
@@ -21,7 +27,7 @@ public interface DepartmentUniqueeCriteria
  * Описывает структуру организационной единицы, включая иерархические связи и метаданные.
  * </summary>
  */
-public class Department
+public class Department : ILifeTimeable
 {
     /**
      * <summary>
@@ -123,7 +129,7 @@ public class Department
     public void ChangeDepartmentName(DepartmentUniqueeCriteria criteria, NotEmptyName other)
     {
 
-        CheckForActive();
+        ThrowIfNotActive();
         if (!criteria.IsSatisfiedBy(other))
         {
             throw new ArgumentException("Название локации уже существует.");
@@ -168,21 +174,10 @@ public class Department
         return DepartmentPath.Create(joinedChildPath);
     }
 
-    //рассчитывает и возвращает уровень иерархии для переданного подразделения
-    private HierarchyLevel CalculateHierarchyLevel(Department department)
-    {
-        //разделитель между именами подразделений
-        const char separator = '/';
-        string[] names = department.Path.Value.Split(separator);
-
-        //глубина - количество имен в пути
-        return HierarchyLevel.Create(names.Length);
-    }
-
-
     //метод для привязки подразделения к другому подразделению
     public void ConnectDepartment(Department department)
     {
+        ThrowIfNotActive();
         if (IsSameDepartment(department))
         {
             throw new InvalidOperationException("Подразделение не может быть родителем самого себя");
@@ -192,7 +187,7 @@ public class Department
         {
             throw new InvalidOperationException("Подразделение не может быть привязано к своему потомку");
         }
-
+        UpDateTimeEdit();
         department.ParentId = Id;
         department.Path = CreateHierarchicalPath(department);
         department.Level = CalculateHierarchyLevel(department);
@@ -201,8 +196,7 @@ public class Department
     //метод для добавления локации в список локаций подразделения
     public void AddLocation(Location location)
     {
-        CheckForActive();
-        
+        ThrowIfNotActive();
         //проверяем существующие DepartmentLocation
         foreach (DepartmentLocation existing in Locations)
         {
@@ -228,8 +222,7 @@ public class Department
     //метод для добавления должности в список должностей подразделения
     public void AddPosition(Position position)
     {
-        CheckForActive();
-
+        ThrowIfNotActive();
         // Проверяем существующие DepartmentPosition
         foreach (DepartmentPosition existing in Positions)
         {
@@ -245,6 +238,17 @@ public class Department
         }
         _positions.Add(new DepartmentPosition(this, position));
         UpDateTimeEdit();
+    }
+
+    //рассчитывает и возвращает уровень иерархии для переданного подразделения
+    private HierarchyLevel CalculateHierarchyLevel(Department department)
+    {
+        //разделитель между именами подразделений
+        const char separator = '/';
+        string[] names = department.Path.Value.Split(separator);
+
+        //глубина - количество имен в пути
+        return HierarchyLevel.Create(names.Length);
     }
 
     //метод для проверки, является ли переданное подразделение тем же самым подразделением
@@ -265,14 +269,7 @@ public class Department
         return department.ParentId == Id;
     }
 
-    //метод для проверки активности сущности
-    private void CheckForActive()
-    {
-        if (LifeTime.IsActive == false)
-        {
-            throw new ArgumentException("Сущность удалена");
-        }
-    }
+    
 
     //метод для обновления даты обновления
     private void UpDateTimeEdit()
