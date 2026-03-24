@@ -160,14 +160,24 @@ public class Department
         //разделитель между именами подразделений
         const char separator = '/';
 
-        //обьъединяет имена подразделений через разделитель
-        string[] names = [Name.Value, department.Name.Value];
-        string joinedName = string.Join(separator, names);
-        return DepartmentPath.Create(joinedName);
+        //объединяет имена подразделений через разделитель
+        string parentPath = Path.Value;
+        string childIdentifier = department.Identifier.Value;
+        string[] parts = [parentPath, childIdentifier];
+        string joinedChildPath = string.Join(separator, parts);
+        return DepartmentPath.Create(joinedChildPath);
     }
 
     //рассчитывает и возвращает уровень иерархии для переданного подразделения
     private HierarchyLevel CalculateHierarchyLevel(Department department)
+    {
+        //разделитель между именами подразделений
+        const char separator = '/';
+        string[] names = department.Path.Value.Split(separator);
+
+        //глубина - количество имен в пути
+        return HierarchyLevel.Create(names.Length);
+    }
 
 
     //метод для привязки подразделения к другому подразделению
@@ -182,6 +192,10 @@ public class Department
         {
             throw new InvalidOperationException("Подразделение не может быть привязано к своему потомку");
         }
+
+        department.ParentId = Id;
+        department.Path = CreateHierarchicalPath(department);
+        department.Level = CalculateHierarchyLevel(department);
     }
 
     //метод для добавления локации в список локаций подразделения
@@ -242,6 +256,8 @@ public class Department
     //метод для проверки, является ли текущее подразделение потомком переданного подразделения
     private bool IsDescendantOf(Department department)
     {
+        //если у переданного подразделения нет родителя,
+        //то текущее подразделение не может быть её потомком
         if (department.ParentId == null)
         {
             return false;
