@@ -5,6 +5,7 @@ using Domain.PositionsContext;
 using Domain.Shared;
 using System.Data;
 using System.Net;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Domain.DepartmentContext;
 
@@ -69,7 +70,7 @@ public class Department
      * Получает идентификатор родительского подразделения.
      * </summary>
      */
-    public DepartmentId ParentId { get; }
+    public DepartmentId? ParentId { get; private set; }
 
     /**
      * <summary>
@@ -107,16 +108,18 @@ public class Department
     
     public EntityLifeTime LifeTime { get; set; }
 
-    //***************************************************
+    
+    //список должностей в подразделении
     private readonly List<DepartmentPosition> _positions;
-    //***************************************************
-    private readonly List<DepartmentLocation> _locations;
-    //****************************************************************************
     public IReadOnlyList<DepartmentPosition> Positions => _positions.AsReadOnly();
-    //****************************************************************************
+    
+    //список локаций в подразделении
+    private readonly List<DepartmentLocation> _locations;
     public IReadOnlyList<DepartmentLocation> Locations => _locations.AsReadOnly();
 
-    //метод для создания названия подразделения с учетом уникальности
+    
+
+    //метод для изменения названия подразделения с учетом уникальности
     public void ChangeDepartmentName(DepartmentUniqueeCriteria criteria, NotEmptyName other)
     {
 
@@ -130,6 +133,7 @@ public class Department
         UpDateTimeEdit();
     }
 
+    //метод создания подразделения с учетом уникальности
     public static Department CreateNew(DepartmentUniqueeCriteria criteria, DepartmentId id,
         DepartmentId parentId,
         NotEmptyName name,
@@ -149,12 +153,43 @@ public class Department
         return new Department(id, parentId, name, identifier, path, depth, lifeTime, Locations, Positions);
     }
 
+    //метод для создания и возвращения иерархического пути для переданного подразделения
+    //путь создается путем объединения имен подразделений через разделитель
+    private DepartmentPath CreateHierarchicalPath(Department department)
+    {
+        //разделитель между именами подразделений
+        const char separator = '/';
+
+        //обьъединяет имена подразделений через разделитель
+        string[] names = [Name.Value, department.Name.Value];
+        string joinedName = string.Join(separator, names);
+        return DepartmentPath.Create(joinedName);
+    }
+
+    //рассчитывает и возвращает уровень иерархии для переданного подразделения
+    private HierarchyLevel CalculateHierarchyLevel(Department department)
 
 
+    //метод для привязки подразделения к другому подразделению
+    public void ConnectDepartment(Department department)
+    {
+        if (IsSameDepartment(department))
+        {
+            throw new InvalidOperationException("Подразделение не может быть родителем самого себя");
+        }
+        
+        if (IsDescendantOf(department))
+        {
+            throw new InvalidOperationException("Подразделение не может быть привязано к своему потомку");
+        }
+    }
+
+    //метод для добавления локации в список локаций подразделения
     public void AddLocation(Location location)
     {
         CheckForActive();
         
+        //проверяем существующие DepartmentLocation
         foreach (DepartmentLocation existing in Locations)
         {
             if (existing.Location.Name == location.Name)
@@ -176,6 +211,7 @@ public class Department
         UpDateTimeEdit();
     }
 
+    //метод для добавления должности в список должностей подразделения
     public void AddPosition(Position position)
     {
         CheckForActive();
@@ -197,6 +233,23 @@ public class Department
         UpDateTimeEdit();
     }
 
+    //метод для проверки, является ли переданное подразделение тем же самым подразделением
+    private bool IsSameDepartment(Department department)
+    {
+        return Id == department.Id;
+    }
+
+    //метод для проверки, является ли текущее подразделение потомком переданного подразделения
+    private bool IsDescendantOf(Department department)
+    {
+        if (department.ParentId == null)
+        {
+            return false;
+        }
+        return department.ParentId == Id;
+    }
+
+    //метод для проверки активности сущности
     private void CheckForActive()
     {
         if (LifeTime.IsActive == false)
@@ -205,6 +258,7 @@ public class Department
         }
     }
 
+    //метод для обновления даты обновления
     private void UpDateTimeEdit()
     {
         LifeTime = LifeTime.Update();
