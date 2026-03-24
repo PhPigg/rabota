@@ -125,9 +125,9 @@ public class Department
         {
             throw new ArgumentException("Название локации уже существует.");
         }
+        Name = other;
         //обновление даты редактирования
         UpDateTimeEdit();
-        Name = other;
     }
 
     public static Department CreateNew(DepartmentUniqueeCriteria criteria, DepartmentId id,
@@ -145,10 +145,6 @@ public class Department
         {
             throw new ArgumentException("Название локации уже существует.");
         }
-
-        
-
-
         /* Возвращаем новый объект, соблюдая порядок аргументов конструктора */
         return new Department(id, parentId, name, identifier, path, depth, lifeTime, Locations, Positions);
     }
@@ -159,48 +155,46 @@ public class Department
     {
         CheckForActive();
         
-        foreach (Location existing in Locations)
+        foreach (DepartmentLocation existing in Locations)
         {
-            if (existing.Name == location.Name)
+            if (existing.Location.Name == location.Name)
             {
                 throw new ArgumentException("Локация с таким названием уже существует в данном подразделении");
             }
             
-            if (existing.Address == location.Address)
+            if (existing.Location.Address == location.Address)
             {
                 throw new ArgumentException("Локация с таким адресом уже существует в данном подразделении");
             }
 
-            if (existing.Id == location.Id)
+            if (existing.Location.Id == location.Id)
             {
                 throw new ArgumentException("Локация с таким идентификатором уже существует в данном подразделении");
             }
         }
+        _locations.Add(new DepartmentLocation(this, location));
         UpDateTimeEdit();
-        _locations.Add(location);
     }
 
     public void AddPosition(Position position)
     {
         CheckForActive();
-        
-        foreach (Position existing in Positions)
+
+        // Проверяем существующие DepartmentPosition
+        foreach (DepartmentPosition existing in Positions)
         {
-            if (existing.Name == position.Name)
+            if (existing.Position.Name == position.Name)
             {
                 throw new ArgumentException("Должность с таким названием уже существует в данном подразделении");
             }
 
-            
-
-            if (existing.Id == position.Id)
+            if (existing.Position.Id == position.Id)
             {
                 throw new ArgumentException("Должность с таким идентификатором уже существует в данном подразделении");
             }
         }
-
+        _positions.Add(new DepartmentPosition(this, position));
         UpDateTimeEdit();
-        _positions.Add(position);
     }
 
     private void CheckForActive()
