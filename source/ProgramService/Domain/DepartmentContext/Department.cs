@@ -9,12 +9,6 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace Domain.DepartmentContext;
 
-//интерфейс для активности сущности
-public interface ILifeTimeable
-{
-    EntityLifeTime LifeTime { get; set; }
-}
-
 //интерфейс для уникальности названия подразделения
 public interface DepartmentUniqueeCriteria
 {
@@ -27,7 +21,7 @@ public interface DepartmentUniqueeCriteria
  * Описывает структуру организационной единицы, включая иерархические связи и метаданные.
  * </summary>
  */
-public class Department : ILifeTimeable
+public class Department
 {
     /**
      * <summary>
@@ -241,14 +235,14 @@ public class Department : ILifeTimeable
     }
 
     //рассчитывает и возвращает уровень иерархии для переданного подразделения
-    private HierarchyLevel CalculateHierarchyLevel(Department department)
+    private DepartmentDepth CalculateHierarchyLevel(Department department)
     {
         //разделитель между именами подразделений
         const char separator = '/';
         string[] names = department.Path.Value.Split(separator);
 
         //глубина - количество имен в пути
-        return HierarchyLevel.Create(names.Length);
+        return DepartmentDepth.Create(names.Length);
     }
 
     //метод для проверки, является ли переданное подразделение тем же самым подразделением

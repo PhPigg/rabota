@@ -8,11 +8,7 @@ using static Domain.LocationContext.Location;
 
 namespace Domain.PositionsContext;
 
-//интерфейс для активности сущности
-public interface ILifeTimeable
-{
-    EntityLifeTime LifeTime { get; set; }
-}
+
 
 //интерфейс для уникальности названия
 public interface IPositionNameUniquenessCriteria

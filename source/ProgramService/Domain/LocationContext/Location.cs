@@ -3,11 +3,7 @@ using Domain.Shared;
 
 namespace Domain.LocationContext;
 
-//интерфейс для активности сущности
-public interface ILifeTimeable
-{
-    EntityLifeTime LifeTime { get; set; }
-}
+
 
 //интерфейс для уникальности названия локации
 public interface ILocationUniquenessCriteria

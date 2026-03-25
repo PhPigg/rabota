@@ -103,11 +103,24 @@ public sealed record EntityLifeTime
         return new EntityLifeTime(now, now, null, true);
     }
 
+    //метод для обновления времени
     public EntityLifeTime Update()
     {
         DateTime now = DateTime.UtcNow;
         return new(CreatedAt, now, DeletedAt, IsActive);
     }
 
-    //метод для обновления
+    //метод для архивации сущности
+    public EntityLifeTime Archive()
+    {
+        DateTime now = DateTime.UtcNow;
+        return new(CreatedAt, UpdatedAt, now, false);
+    }
+
+    //метод для деархивации сущности
+    public EntityLifeTime Restore()
+    {
+        DateTime now = DateTime.UtcNow;
+        return new(CreatedAt, UpdatedAt, DeletedAt, true);
+    }
 }

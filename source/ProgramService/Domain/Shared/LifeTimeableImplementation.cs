@@ -2,34 +2,34 @@ namespace Domain.Shared;
 
 public sealed record LifeTimeableImplementation
 {
-    extension(ILifetimeable lifetimeable)
+    extension(ILifeTimeable lifetimeable)
     {
 
         public void Update()
         {
 
-            lifetimable.Lifetime = lifetimeable.Lifetime.Update();
+            lifetimeable.LifeTime = lifetimeable.LifeTime.Update();
 
         }
 
         public void Archive()
         {
 
-            lifetimable.Lifetime = lifetimeable.Lifetime.Archive();
+            lifetimeable.LifeTime = lifetimeable.LifeTime.Archive();
 
         }
 
         public void Restore()
         {
 
-            lifetimable.Lifetime = lifetimeable.Lifetime.Restore();
+            lifetimeable.LifeTime = lifetimeable.LifeTime.Restore();
 
         }
 
         public void ThrowIfNotActive()
         {
 
-            if (lifetimeable.IsActive == false)
+            if (lifetimeable.LifeTime.IsActive == false)
             {
 
                 throw new InvalidOperationException("Запись находится в архиве");
