@@ -22,7 +22,7 @@ public interface IPositionNameUniquenessCriteria
  * Объединяет идентификатор, наименование, описание и данные о жизненном цикле.
  * </summary>
  */
-public class Position
+public class Position : ILifeTimeable
 {
     /**
      * <summary>
@@ -74,7 +74,7 @@ public class Position
     //метод для проверки уникальности названия
     public void ChangePositionName(IPositionNameUniquenessCriteria criteria, NotEmptyName other)
     {
-        ThrowIfNotActive();   
+        this.ThrowIfNotActive();   
         if (!criteria.IsSatisfiedBy(other))
         {
             throw new InvalidOperationException("Название должности уже используется.");

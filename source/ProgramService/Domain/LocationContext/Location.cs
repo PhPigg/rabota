@@ -18,7 +18,7 @@ public interface ILocationUniquenessCriteria
  * Описывает физическое местоположение объекта с учетом адреса и часового пояса.
  * </summary>
  */
-public class Location
+public class Location : ILifeTimeable
 {
     /**
      * <summary>
@@ -96,7 +96,7 @@ public class Location
     //метод изменения региона
     public void ChangeIanaTimeZone(IanaTimeZone other)
     {
-        ThrowIfNotActive();
+        this.ThrowIfNotActive();
         TimeZone = other;
         UpDateTimeEdit();
     }
@@ -104,7 +104,7 @@ public class Location
     //метод изменения имени локации c учетом уникальности
     public void ChangeLocationName(ILocationUniquenessCriteria criteria, NotEmptyName other)
     {
-        ThrowIfNotActive();
+        this.ThrowIfNotActive();
         
         if (!criteria.IsSatisfiedBy(other))
         {
@@ -119,7 +119,7 @@ public class Location
     //метод изменения адреса локации с учетом уникальности
     public void ChangeLocationAddress(ILocationUniquenessCriteria criteria, LocationAddress other)
     {
-        ThrowIfNotActive();
+        this.ThrowIfNotActive();
         
         if (!criteria.IsSatisfiedBy(other))
         {

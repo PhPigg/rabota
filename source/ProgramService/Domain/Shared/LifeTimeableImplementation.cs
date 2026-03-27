@@ -1,6 +1,7 @@
 namespace Domain.Shared;
 
-public sealed record LifeTimeableImplementation
+
+public static class LifeTimeableExtensions
 {
     extension(ILifeTimeable lifetimeable)
     {

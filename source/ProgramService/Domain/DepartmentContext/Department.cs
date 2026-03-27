@@ -21,7 +21,7 @@ public interface DepartmentUniqueeCriteria
  * Описывает структуру организационной единицы, включая иерархические связи и метаданные.
  * </summary>
  */
-public class Department
+public class Department : ILifeTimeable
 {
     /**
      * <summary>
@@ -91,14 +91,14 @@ public class Department
      * Получает полный путь подразделения в структуре организации.
      * </summary>
      */
-    public DepartmentPath Path { get; }
+    public DepartmentPath Path { get; set; }
 
     /**
      * <summary>
      * Получает уровень глубины подразделения в дереве иерархии.
      * </summary>
      */
-    public DepartmentDepth Depth { get; }
+    public DepartmentDepth Depth { get; set; }
 
     /**
      * <summary>
@@ -123,7 +123,7 @@ public class Department
     public void ChangeDepartmentName(DepartmentUniqueeCriteria criteria, NotEmptyName other)
     {
 
-        ThrowIfNotActive();
+        this.ThrowIfNotActive();
         if (!criteria.IsSatisfiedBy(other))
         {
             throw new ArgumentException("Название локации уже существует.");
@@ -171,7 +171,7 @@ public class Department
     //метод для привязки подразделения к другому подразделению
     public void ConnectDepartment(Department department)
     {
-        ThrowIfNotActive();
+        this.ThrowIfNotActive();
         if (IsSameDepartment(department))
         {
             throw new InvalidOperationException("Подразделение не может быть родителем самого себя");
@@ -184,13 +184,13 @@ public class Department
         UpDateTimeEdit();
         department.ParentId = Id;
         department.Path = CreateHierarchicalPath(department);
-        department.Level = CalculateHierarchyLevel(department);
+        department.Depth = CalculateHierarchyLevel(department);
     }
 
     //метод для добавления локации в список локаций подразделения
     public void AddLocation(Location location)
     {
-        ThrowIfNotActive();
+        this.ThrowIfNotActive();
         //проверяем существующие DepartmentLocation
         foreach (DepartmentLocation existing in Locations)
         {
@@ -216,7 +216,7 @@ public class Department
     //метод для добавления должности в список должностей подразделения
     public void AddPosition(Position position)
     {
-        ThrowIfNotActive();
+        this.ThrowIfNotActive();
         // Проверяем существующие DepartmentPosition
         foreach (DepartmentPosition existing in Positions)
         {
@@ -242,7 +242,7 @@ public class Department
         string[] names = department.Path.Value.Split(separator);
 
         //глубина - количество имен в пути
-        return DepartmentDepth.Create(names.Length);
+        return DepartmentDepth.Create((short)names.Length);
     }
 
     //метод для проверки, является ли переданное подразделение тем же самым подразделением
