@@ -2,11 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Xunit;
 
-namespace MyProject.Tests
+namespace MyProject.Tests.DepartmentTests
 {
-    public class PositionIdTests
+    public class DepartmentTests
     {
         /// <summary>
         /// Тест успешного создания через фабричный метод Create
@@ -75,7 +74,5 @@ namespace MyProject.Tests
             // Act & Assert
             Assert.Throws<ArgumentException>(() => PositionId.Create(invalidGuid));
         }
-
-
     }
 }
