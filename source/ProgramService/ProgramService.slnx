@@ -1,3 +1,4 @@
 <Solution>
   <Project Path="Domain/Domain.csproj" Id="1fa0aee9-f175-4c3a-9112-5340ca27445f" />
+  <Project Path="MyProject.Tests/MyProject.Tests.csproj" Id="1464fe4e-4b30-4610-9290-b0046097fb81" />
 </Solution>
