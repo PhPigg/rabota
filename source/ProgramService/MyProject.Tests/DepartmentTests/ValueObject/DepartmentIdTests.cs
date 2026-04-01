@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace MyProject.Tests.DepartmentTests
+namespace MyProject.Tests.DepartmentTests.ValueObject
 {
-    public class DepartmentTests
+    public class DepartmentIdTests
     {
         /// <summary>
         /// Тест успешного создания через фабричный метод Create

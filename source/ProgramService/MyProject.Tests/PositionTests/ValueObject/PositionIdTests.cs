@@ -2,10 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Xunit;
 
-namespace MyProject.Tests.LocationTests
+namespace MyProject.Tests.PositionTests.ValueObject
 {
-    public class LocationIdTests
+    public class PositionIdTests
     {
         /// <summary>
         /// Тест успешного создания через фабричный метод Create
