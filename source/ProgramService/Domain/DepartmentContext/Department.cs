@@ -126,7 +126,7 @@ public class Department : ILifeTimeable
         this.ThrowIfNotActive();
         if (!criteria.IsSatisfiedBy(other))
         {
-            throw new ArgumentException("Название локации уже существует.");
+            throw new ArgumentException("Название подразделения уже существует.");
         }
         Name = other;
         //обновление даты редактирования
@@ -147,7 +147,7 @@ public class Department : ILifeTimeable
         //Проверка названия подразделения на уникальность
         if (!criteria.IsSatisfiedBy(name))
         {
-            throw new ArgumentException("Название локации уже существует.");
+            throw new ArgumentException("Название подразделения уже существует.");
         }
         /* Возвращаем новый объект, соблюдая порядок аргументов конструктора */
         return new Department(id, parentId, name, identifier, path, depth, lifeTime, Locations, Positions);

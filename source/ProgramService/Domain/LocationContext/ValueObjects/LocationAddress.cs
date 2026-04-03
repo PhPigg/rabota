@@ -1,4 +1,6 @@
-﻿namespace Domain.LocationContext.ValueObjects;
+﻿using System.Collections.Immutable;
+
+namespace Domain.LocationContext.ValueObjects;
 
 /**
  * <summary>
@@ -9,7 +11,7 @@
 public record LocationAddress
 {
     /** <summary>Внутренний список частей адреса.</summary> */
-    private readonly List<string> _addressParts;
+    private readonly ImmutableArray<string> _addressParts;
 
     /** <summary>Полное строковое представление адреса.</summary> */
     public string Value { get; }
@@ -25,7 +27,7 @@ public record LocationAddress
      */
     private LocationAddress(IEnumerable<string> parts)
     {
-        _addressParts = [.. parts];
+        _addressParts = ImmutableArray.CreateRange(parts);
         Value = string.Join(", ", _addressParts);
     }
 
@@ -62,5 +64,24 @@ public record LocationAddress
         }
 
         return new LocationAddress(parts);
+    }
+    public virtual bool Equals(LocationAddress? other)
+    {
+        if (other is null) return false;
+        if (ReferenceEquals(this, other)) return true;
+
+        return Value == other.Value &&
+               _addressParts.SequenceEqual(other._addressParts);
+    }
+
+    public override int GetHashCode()
+    {
+        var hash = new HashCode();
+        hash.Add(Value);
+        foreach (var part in _addressParts)
+        {
+            hash.Add(part);
+        }
+        return hash.ToHashCode();
     }
 }
