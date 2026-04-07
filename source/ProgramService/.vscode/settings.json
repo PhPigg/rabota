@@ -1,1 +1,5 @@
-{}
+{
+    "kide.roslyn.projectOrSolutionFiles": [
+        "ProgramService.slnx"
+    ]
+}

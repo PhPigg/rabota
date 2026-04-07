@@ -45,8 +45,7 @@ public class Department : ILifeTimeable
         EntityLifeTime lifeTime,
         IEnumerable<DepartmentLocation>? Locations = null,
         IEnumerable<DepartmentPosition>? Positions = null
-    )
-    {
+    )    {
         Id = id;
         ParentId = parentId;
         Name = name;
@@ -54,8 +53,8 @@ public class Department : ILifeTimeable
         Path = path;
         Depth = depth;
         LifeTime = lifeTime;
-        Locations = Locations is null ? [] : [.. Locations];
-        Positions = Positions is null ? [] : [.. Positions];
+        _locations = Locations is null ? [] : [.. Locations];
+        _positions = Positions is null ? [] : [.. Positions];
     }
 
     /**
@@ -194,7 +193,7 @@ public class Department : ILifeTimeable
         //проверяем существующие DepartmentLocation
         foreach (DepartmentLocation existing in Locations)
         {
-            if (existing.Location.Name == location.Name)
+            if (existing.Location.Name.Value == location.Name.Value)
             {
                 throw new ArgumentException("Локация с таким названием уже существует в данном подразделении");
             }
@@ -220,7 +219,7 @@ public class Department : ILifeTimeable
         // Проверяем существующие DepartmentPosition
         foreach (DepartmentPosition existing in Positions)
         {
-            if (existing.Position.Name == position.Name)
+            if (existing.Position.Name.Value == position.Name.Value)
             {
                 throw new ArgumentException("Должность с таким названием уже существует в данном подразделении");
             }
@@ -254,13 +253,22 @@ public class Department : ILifeTimeable
     //метод для проверки, является ли текущее подразделение потомком переданного подразделения
     private bool IsDescendantOf(Department department)
     {
-        //если у переданного подразделения нет родителя,
-        //то текущее подразделение не может быть её потомком
-        if (department.ParentId == null)
+        // Проверяем, является ли department предком текущего подразделения
+        // Это нужно, чтобы избежать создания цикла в иерархии
+        // Так как у нас есть только ParentId (ссылка на родителя), а не список детей,
+        // мы можем проверить только прямой случай: если ParentId текущего == department.Id
+        
+        // Если у текущего подразделения есть родитель и этот родитель - department,
+        // значит department является непосредственным предком
+        if (ParentId == department.Id)
         {
-            return false;
+            return true;
         }
-        return department.ParentId == Id;
+        
+        // Для полной проверки цикла (включая "дедушку" и более дальних предков)
+        // потребовался бы репозиторий или кэш всех подразделений
+        // В данной реализации ограничиваемся проверкой прямого родителя
+        return false;
     }
 
     
