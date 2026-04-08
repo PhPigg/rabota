@@ -1,7 +1,19 @@
 ﻿using Domain.DepartmentContext.ValueObject;
+using Domain.LocationContext;
+using Domain.LocationContext.ValueObjects;
+using Domain.PositionsContext;
 using Domain.Shared;
+using System.Data;
+using System.Net;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Domain.DepartmentContext;
+
+//интерфейс для уникальности названия подразделения
+public interface DepartmentUniqueeCriteria
+{
+    bool IsSatisfiedBy(NotEmptyName name);
+}
 
 /**
  * <summary>
@@ -9,7 +21,7 @@ namespace Domain.DepartmentContext;
  * Описывает структуру организационной единицы, включая иерархические связи и метаданные.
  * </summary>
  */
-public class Department
+public class Department : ILifeTimeable
 {
     /**
      * <summary>
@@ -23,16 +35,17 @@ public class Department
      * <param name="depth">Уровень вложенности в иерархии.</param>
      * <param name="lifeTime">Сведения о времени создания, обновления и статусе активности.</param>
      */
-    public Department(
+    private Department(
         DepartmentId id,
         DepartmentId parentId,
         NotEmptyName name,
         DepartmentIdentifier identifier,
         DepartmentPath path,
         DepartmentDepth depth,
-        EntityLifeTime lifeTime
-    )
-    {
+        EntityLifeTime lifeTime,
+        IEnumerable<DepartmentLocation>? Locations = null,
+        IEnumerable<DepartmentPosition>? Positions = null
+    )    {
         Id = id;
         ParentId = parentId;
         Name = name;
@@ -40,6 +53,8 @@ public class Department
         Path = path;
         Depth = depth;
         LifeTime = lifeTime;
+        _locations = Locations is null ? [] : [.. Locations];
+        _positions = Positions is null ? [] : [.. Positions];
     }
 
     /**
@@ -54,14 +69,14 @@ public class Department
      * Получает идентификатор родительского подразделения.
      * </summary>
      */
-    public DepartmentId ParentId { get; }
+    public DepartmentId? ParentId { get; private set; }
 
     /**
      * <summary>
      * Получает наименование подразделения.
      * </summary>
      */
-    public NotEmptyName Name { get; }
+    public NotEmptyName Name { get; set; }
 
     /**
      * <summary>
@@ -75,19 +90,192 @@ public class Department
      * Получает полный путь подразделения в структуре организации.
      * </summary>
      */
-    public DepartmentPath Path { get; }
+    public DepartmentPath Path { get; set; }
 
     /**
      * <summary>
      * Получает уровень глубины подразделения в дереве иерархии.
      * </summary>
      */
-    public DepartmentDepth Depth { get; }
+    public DepartmentDepth Depth { get; set; }
 
     /**
      * <summary>
      * Получает данные о жизненном цикле (создание, изменение, активность).
      * </summary>
      */
-    public EntityLifeTime LifeTime { get; }
+    
+    public EntityLifeTime LifeTime { get; set; }
+
+    
+    //список должностей в подразделении
+    private readonly List<DepartmentPosition> _positions;
+    public IReadOnlyList<DepartmentPosition> Positions => _positions.AsReadOnly();
+    
+    //список локаций в подразделении
+    private readonly List<DepartmentLocation> _locations;
+    public IReadOnlyList<DepartmentLocation> Locations => _locations.AsReadOnly();
+
+    
+
+    //метод для изменения названия подразделения с учетом уникальности
+    public void ChangeDepartmentName(DepartmentUniqueeCriteria criteria, NotEmptyName other)
+    {
+
+        this.ThrowIfNotActive();
+        if (!criteria.IsSatisfiedBy(other))
+        {
+            throw new ArgumentException("Название подразделения уже существует.");
+        }
+        Name = other;
+        //обновление даты редактирования
+        UpDateTimeEdit();
+    }
+
+    //метод создания подразделения с учетом уникальности
+    public static Department CreateNew(DepartmentUniqueeCriteria criteria, DepartmentId id,
+        DepartmentId parentId,
+        NotEmptyName name,
+        DepartmentIdentifier identifier,
+        DepartmentPath path,
+        DepartmentDepth depth,
+        EntityLifeTime lifeTime,
+        IEnumerable<DepartmentLocation>? Locations = null,
+        IEnumerable<DepartmentPosition>? Positions = null)
+    {
+        //Проверка названия подразделения на уникальность
+        if (!criteria.IsSatisfiedBy(name))
+        {
+            throw new ArgumentException("Название подразделения уже существует.");
+        }
+        /* Возвращаем новый объект, соблюдая порядок аргументов конструктора */
+        return new Department(id, parentId, name, identifier, path, depth, lifeTime, Locations, Positions);
+    }
+
+    //метод для создания и возвращения иерархического пути для переданного подразделения
+    //путь создается путем объединения имен подразделений через разделитель
+    private DepartmentPath CreateHierarchicalPath(Department department)
+    {
+        //разделитель между именами подразделений
+        const char separator = '/';
+
+        //объединяет имена подразделений через разделитель
+        string parentPath = Path.Value;
+        string childIdentifier = department.Identifier.Value;
+        string[] parts = [parentPath, childIdentifier];
+        string joinedChildPath = string.Join(separator, parts);
+        return DepartmentPath.Create(joinedChildPath);
+    }
+
+    //метод для привязки подразделения к другому подразделению
+    public void ConnectDepartment(Department department)
+    {
+        this.ThrowIfNotActive();
+        if (IsSameDepartment(department))
+        {
+            throw new InvalidOperationException("Подразделение не может быть родителем самого себя");
+        }
+        
+        if (IsDescendantOf(department))
+        {
+            throw new InvalidOperationException("Подразделение не может быть привязано к своему потомку");
+        }
+        UpDateTimeEdit();
+        department.ParentId = Id;
+        department.Path = CreateHierarchicalPath(department);
+        department.Depth = CalculateHierarchyLevel(department);
+    }
+
+    //метод для добавления локации в список локаций подразделения
+    public void AddLocation(Location location)
+    {
+        this.ThrowIfNotActive();
+        //проверяем существующие DepartmentLocation
+        foreach (DepartmentLocation existing in Locations)
+        {
+            if (existing.Location.Name.Value == location.Name.Value)
+            {
+                throw new ArgumentException("Локация с таким названием уже существует в данном подразделении");
+            }
+            
+            if (existing.Location.Address == location.Address)
+            {
+                throw new ArgumentException("Локация с таким адресом уже существует в данном подразделении");
+            }
+
+            if (existing.Location.Id == location.Id)
+            {
+                throw new ArgumentException("Локация с таким идентификатором уже существует в данном подразделении");
+            }
+        }
+        _locations.Add(new DepartmentLocation(this, location));
+        UpDateTimeEdit();
+    }
+
+    //метод для добавления должности в список должностей подразделения
+    public void AddPosition(Position position)
+    {
+        this.ThrowIfNotActive();
+        // Проверяем существующие DepartmentPosition
+        foreach (DepartmentPosition existing in Positions)
+        {
+            if (existing.Position.Name.Value == position.Name.Value)
+            {
+                throw new ArgumentException("Должность с таким названием уже существует в данном подразделении");
+            }
+
+            if (existing.Position.Id == position.Id)
+            {
+                throw new ArgumentException("Должность с таким идентификатором уже существует в данном подразделении");
+            }
+        }
+        _positions.Add(new DepartmentPosition(this, position));
+        UpDateTimeEdit();
+    }
+
+    //рассчитывает и возвращает уровень иерархии для переданного подразделения
+    private DepartmentDepth CalculateHierarchyLevel(Department department)
+    {
+        //разделитель между именами подразделений
+        const char separator = '/';
+        string[] names = department.Path.Value.Split(separator);
+
+        //глубина - количество имен в пути
+        return DepartmentDepth.Create((short)names.Length);
+    }
+
+    //метод для проверки, является ли переданное подразделение тем же самым подразделением
+    private bool IsSameDepartment(Department department)
+    {
+        return Id == department.Id;
+    }
+
+    //метод для проверки, является ли текущее подразделение потомком переданного подразделения
+    private bool IsDescendantOf(Department department)
+    {
+        // Проверяем, является ли department предком текущего подразделения
+        // Это нужно, чтобы избежать создания цикла в иерархии
+        // Так как у нас есть только ParentId (ссылка на родителя), а не список детей,
+        // мы можем проверить только прямой случай: если ParentId текущего == department.Id
+        
+        // Если у текущего подразделения есть родитель и этот родитель - department,
+        // значит department является непосредственным предком
+        if (ParentId == department.Id)
+        {
+            return true;
+        }
+        
+        // Для полной проверки цикла (включая "дедушку" и более дальних предков)
+        // потребовался бы репозиторий или кэш всех подразделений
+        // В данной реализации ограничиваемся проверкой прямого родителя
+        return false;
+    }
+
+    
+
+    //метод для обновления даты обновления
+    private void UpDateTimeEdit()
+    {
+        LifeTime = LifeTime.Update();
+    }
 }

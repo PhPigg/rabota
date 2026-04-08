@@ -19,7 +19,14 @@ public sealed record EntityLifeTime
      * Получает дату и время последнего обновления сущности.
      * </summary>
      */
-    public DateTime UpdatedAt { get; }
+    public DateTime? UpdatedAt { get; }
+
+    /**
+    * <summary>
+    * Получает дату и время удаления сущности.
+    * </summary>
+    */
+    public DateTime? DeletedAt { get; }
 
     /**
      * <summary>
@@ -36,10 +43,15 @@ public sealed record EntityLifeTime
      * <param name="updatedAt">Временная метка последнего изменения.</param>
      * <param name="isActive">Текущий статус активности.</param>
      */
-    private EntityLifeTime(DateTime createdAt, DateTime updatedAt, bool isActive)
+    private EntityLifeTime(
+        DateTime createdAt, 
+        DateTime? updatedAt = null,
+        DateTime? deletedAt = null,
+        bool isActive = true)
     {
         CreatedAt = createdAt;
         UpdatedAt = updatedAt;
+        DeletedAt = deletedAt;
         IsActive = isActive;
     }
 
@@ -55,7 +67,7 @@ public sealed record EntityLifeTime
      * Выбрасывается, если переданы некорректные даты или нарушена хронология.
      * </exception>
      */
-    public static EntityLifeTime Create(DateTime createdAt, DateTime updatedAt, bool isActive)
+    public static EntityLifeTime Create(DateTime createdAt, DateTime updatedAt, DateTime deletedAt, bool isActive)
     {
         /* Проверка на допустимый диапазон дат для создания */
         if (createdAt == DateTime.MinValue || createdAt == DateTime.MaxValue)
@@ -75,7 +87,7 @@ public sealed record EntityLifeTime
             throw new ArgumentException("Дата обновления не может быть меньше даты создания.", nameof(updatedAt));
         }
 
-        return new EntityLifeTime(createdAt, updatedAt, isActive);
+        return new EntityLifeTime(createdAt, updatedAt, deletedAt, isActive);
     }
 
     /**
@@ -88,6 +100,27 @@ public sealed record EntityLifeTime
     {
         /* Используем UtcNow для предотвращения проблем с часовыми поясами */
         DateTime now = DateTime.UtcNow;
-        return new EntityLifeTime(now, now, true);
+        return new EntityLifeTime(now, now, null, true);
+    }
+
+    //метод для обновления времени
+    public EntityLifeTime Update()
+    {
+        DateTime now = DateTime.UtcNow;
+        return new(CreatedAt, now, DeletedAt, IsActive);
+    }
+
+    //метод для архивации сущности
+    public EntityLifeTime Archive()
+    {
+        DateTime now = DateTime.UtcNow;
+        return new(CreatedAt, UpdatedAt, now, false);
+    }
+
+    //метод для деархивации сущности
+    public EntityLifeTime Restore()
+    {
+        DateTime now = DateTime.UtcNow;
+        return new(CreatedAt, UpdatedAt, DeletedAt, true);
     }
 }
