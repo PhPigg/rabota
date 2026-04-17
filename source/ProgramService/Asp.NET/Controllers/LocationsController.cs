@@ -4,6 +4,7 @@ using Domain.LocationContext.ValueObjects;
 using Domain.Shared;
 using Domain.InMemory;
 using static Domain.LocationContext.ValueObjects.LocationAddress;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Asp.NET.Controllers;
 
@@ -52,12 +53,6 @@ public class LocationsController : ControllerBase
     {
         try
         {
-            // Валидация входных данных
-            if (request == null)
-            {
-                return BadRequest("Запрос не может быть пустым.");
-            }
-
             var name = NotEmptyName.Create(request.Name);
             var address = LocationAddress.Create(request.Address);
             var timeZone = IanaTimeZone.Create(request.TimeZone);
@@ -66,7 +61,10 @@ public class LocationsController : ControllerBase
             var location = Location.CreateNew(criteria, address, timeZone, name);
             InMemoryLocationRepository.Add(location, criteria);
             
-            return CreatedAtAction(nameof(GetById), new { id = location.Id.Value }, location);
+            var B = new LocationResponse(location.Name.Value, location.Address.Value, location.TimeZone.Value,  location.LifeTime.CreatedAt, location.LifeTime.UpdatedAt, location.LifeTime.DeletedAt, location.LifeTime.IsActive);
+            
+
+            return Ok(B);
         }
         catch (ArgumentException ex)
         {
@@ -195,3 +193,5 @@ public class LocationsController : ControllerBase
 
 public record CreateLocationRequest(string Name, string Address, string TimeZone);
 public record UpdateLocationRequest(string? Name, string? Address, string? TimeZone);
+
+public record LocationResponse(string Name, string Address, string TimeZone, DateTime CreatedAt, DateTime? UpdatedAt, DateTime? DeletedAt, bool IsActive);
