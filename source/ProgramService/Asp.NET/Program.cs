@@ -37,19 +37,20 @@ builder.Services.Configure<RouteOptions>(options =>
 
 var app = builder.Build();
 
-// Configure routing and controllers
-app.UseRouting();
-app.MapControllers();
-
-// Configure Swagger middleware
+// Configure Swagger middleware (must be before UseRouting and MapControllers)
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1");
+        c.RoutePrefix = "swagger";
     });
 }
+
+// Configure routing and controllers
+app.UseRouting();
+app.MapControllers();
 
 // Initialize storage with seed data
 InitializeStorage();
