@@ -10,17 +10,14 @@ public static class InMemoryPositionRepository
 {
     private static readonly ConcurrentDictionary<PositionId, Position> _positions = new();
 
-    public static void Add(Position position, IPositionNameUniquenessCriteria criteria)
+    public static void Add(Position position)
     {
         if (_positions.ContainsKey(position.Id))
         {
             throw new ArgumentException("Должность с таким идентификатором уже существует.");
         }
 
-        if (!criteria.IsSatisfiedBy(position.Name))
-        {
-            throw new ArgumentException("Должность с таким названием уже существует.");
-        }
+        
 
         _positions[position.Id] = position;
     }
@@ -30,16 +27,7 @@ public static class InMemoryPositionRepository
         return _positions.TryRemove(id, out _);
     }
 
-    public static bool HardRemove(PositionId id)
-    {
-        if (_positions.TryGetValue(id, out var position))
-        {
-            // Полное удаление из хранилища
-            _positions.TryRemove(id, out _);
-            return true;
-        }
-        return false;
-    }
+   
 
     public static Position? GetById(PositionId id)
     {

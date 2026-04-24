@@ -4,6 +4,7 @@ using Domain.PositionsContext.ValueObjects;
 using Domain.Shared;
 using Domain.InMemory;
 using static Domain.PositionsContext.ValueObjects.PositionDescription;
+using Asp.NET;
 
 namespace Asp.NET.Controllers;
 
@@ -166,7 +167,7 @@ public class PositionsController : ControllerBase
                 return NotFound();
             }
 
-            InMemoryPositionRepository.HardRemove(positionId);
+            InMemoryPositionRepository.Remove(positionId);
             
             return NoContent();
         }

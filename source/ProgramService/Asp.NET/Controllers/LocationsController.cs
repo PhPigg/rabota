@@ -5,6 +5,7 @@ using Domain.Shared;
 using Domain.InMemory;
 using static Domain.LocationContext.ValueObjects.LocationAddress;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using Asp.NET;
 
 namespace Asp.NET.Controllers;
 
@@ -61,10 +62,7 @@ public class LocationsController : ControllerBase
             var location = Location.CreateNew(criteria, address, timeZone, name);
             InMemoryLocationRepository.Add(location, criteria);
             
-            var B = new LocationResponse(location.Name.Value, location.Address.Value, location.TimeZone.Value,  location.LifeTime.CreatedAt, location.LifeTime.UpdatedAt, location.LifeTime.DeletedAt, location.LifeTime.IsActive);
-            
-
-            return Ok(B);
+            return Ok(new LocationResponse(location.Name.Value, location.Address.Value, location.TimeZone.Value, location.LifeTime.CreatedAt, location.LifeTime.UpdatedAt, location.LifeTime.DeletedAt, location.LifeTime.IsActive));
         }
         catch (ArgumentException ex)
         {
@@ -180,7 +178,7 @@ public class LocationsController : ControllerBase
                 return NotFound();
             }
 
-            InMemoryLocationRepository.HardRemove(locationId);
+            InMemoryLocationRepository.Remove(locationId);
             
             return NoContent();
         }

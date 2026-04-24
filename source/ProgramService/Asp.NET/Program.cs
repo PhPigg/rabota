@@ -6,6 +6,7 @@ using Domain.LocationContext.ValueObjects;
 using Domain.PositionsContext;
 using Domain.PositionsContext.ValueObjects;
 using Domain.Shared;
+using Asp.NET;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -65,31 +66,6 @@ static void InitializeStorage()
     
     InMemoryLocationRepository.InitializeSeedData(locationCriteria);
     InMemoryPositionRepository.InitializeSeedData(positionCriteria);
-}
-
-// Uniqueness criteria implementations
-public class LocationUniquenessCriteria : ILocationUniquenessCriteria
-{
-    public bool IsSatisfiedBy(NotEmptyName name)
-    {
-        var existing = InMemoryLocationRepository.GetAll();
-        return !existing.Any(l => l.Id != LocationId.CreateNew() && l.Name.Value == name.Value);
-    }
-
-    public bool IsSatisfiedBy(LocationAddress address)
-    {
-        var existing = InMemoryLocationRepository.GetAll();
-        return !existing.Any(l => l.Id != LocationId.CreateNew() && l.Address.Value == address.Value);
-    }
-}
-
-public class PositionNameUniquenessCriteria : IPositionNameUniquenessCriteria
-{
-    public bool IsSatisfiedBy(NotEmptyName name)
-    {
-        var existing = InMemoryPositionRepository.GetAll();
-        return !existing.Any(p => p.Id != PositionId.CreateNew() && p.Name.Value == name.Value);
-    }
 }
 
 [JsonSerializable(typeof(Todo[]))]

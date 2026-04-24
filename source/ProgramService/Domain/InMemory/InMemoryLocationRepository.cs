@@ -10,22 +10,14 @@ public static class InMemoryLocationRepository
 {
     private static readonly ConcurrentDictionary<LocationId, Location> _locations = new();
 
-    public static void Add(Location location, ILocationUniquenessCriteria criteria)
+    public static void Add(Location location)
     {
         if (_locations.ContainsKey(location.Id))
         {
             throw new ArgumentException("Локация с таким идентификатором уже существует.");
         }
 
-        if (!criteria.IsSatisfiedBy(location.Name))
-        {
-            throw new ArgumentException("Локация с таким названием уже существует.");
-        }
-
-        if (!criteria.IsSatisfiedBy(location.Address))
-        {
-            throw new ArgumentException("Локация с таким адресом уже существует.");
-        }
+        
 
         _locations[location.Id] = location;
     }
@@ -35,16 +27,7 @@ public static class InMemoryLocationRepository
         return _locations.TryRemove(id, out _);
     }
 
-    public static bool HardRemove(LocationId id)
-    {
-        if (_locations.TryGetValue(id, out var location))
-        {
-            // Полное удаление из хранилища
-            _locations.TryRemove(id, out _);
-            return true;
-        }
-        return false;
-    }
+    
 
     public static Location? GetById(LocationId id)
     {
