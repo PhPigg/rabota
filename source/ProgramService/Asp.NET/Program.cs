@@ -7,6 +7,12 @@ using Domain.PositionsContext;
 using Domain.PositionsContext.ValueObjects;
 using Domain.Shared;
 using Asp.NET;
+using Infostructure;
+using Microsoft.VisualBasic;
+using Microsoft.Extensions.Options;
+
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +33,9 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+
+builder.Services.AddOptions<db_connectionsoptions>().BindConfiguration("db_connectionsoptions");
+
 // Add controllers
 builder.Services.AddControllers();
 
@@ -37,6 +46,10 @@ builder.Services.Configure<RouteOptions>(options =>
 });
 
 var app = builder.Build();
+using var scope = app.Services.CreateScope();
+var options = scope.ServiceProvider.GetRequiredService<IOptions<db_connectionsoptions>>();
+Console.WriteLine($"{options.Value.host}\n{options.Value.username}\n{options.Value.password}\n{options.Value.database}\n{options.Value.port}");
+
 
 // Configure Swagger middleware (must be before UseRouting and MapControllers)
 if (app.Environment.IsDevelopment())

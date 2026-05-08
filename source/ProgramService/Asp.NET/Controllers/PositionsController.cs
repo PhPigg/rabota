@@ -47,7 +47,7 @@ public class PositionsController : ControllerBase
         }
     }
 
-    // POST: api/positions
+    /* POST: api/positions
     [HttpPost]
     public ActionResult<Position> Create([FromBody] CreatePositionRequest request)
     {
@@ -76,7 +76,7 @@ public class PositionsController : ControllerBase
         {
             return Conflict(ex.Message);
         }
-    }
+    }*/
 
     // PUT: api/positions/{id}
     [HttpPut("{id}")]

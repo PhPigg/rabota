@@ -48,7 +48,7 @@ public class LocationsController : ControllerBase
         }
     }
 
-    // POST: api/locations
+    /* POST: api/locations
     [HttpPost]
     public ActionResult<Location> Create([FromBody] CreateLocationRequest request)
     {
@@ -72,7 +72,7 @@ public class LocationsController : ControllerBase
         {
             return Conflict(ex.Message);
         }
-    }
+    }*/
 
     // PUT: api/locations/{id}
     [HttpPut("{id}")]
