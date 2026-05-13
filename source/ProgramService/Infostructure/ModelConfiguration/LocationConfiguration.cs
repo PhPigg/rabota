@@ -1,8 +1,8 @@
 using Domain.LocationContext;
+using Domain.LocationContext.ValueObjects;
 using Domain.Shared;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Domain.LocationContext.ValueObjects;
 
 namespace Infostructure.ModelConfiguration;
 

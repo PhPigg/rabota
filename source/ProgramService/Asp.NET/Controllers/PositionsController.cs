@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+using DepartmentLocationConfiguration.AspNetCore.Mvc;
 using Domain.PositionsContext;
 using Domain.PositionsContext.ValueObjects;
 using Domain.Shared;

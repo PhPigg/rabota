@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Domain.PositionsContext;
+using Domain.DepartmentContext;
+using Domain.LocationContext;
 
 namespace Infostructure;
 

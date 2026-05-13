@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+using DepartmentLocationConfiguration.AspNetCore.Mvc;
 using Domain.LocationContext;
 using Domain.LocationContext.ValueObjects;
 using Domain.Shared;

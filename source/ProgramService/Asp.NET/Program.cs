@@ -1,5 +1,5 @@
 using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.Http.HttpResults;
+using DepartmentLocationConfiguration.AspNetCore.Http.HttpResults;
 using Domain.InMemory;
 using Domain.LocationContext;
 using Domain.LocationContext.ValueObjects;
@@ -8,8 +8,8 @@ using Domain.PositionsContext.ValueObjects;
 using Domain.Shared;
 using Asp.NET;
 using Infostructure;
-using Microsoft.VisualBasic;
-using Microsoft.Extensions.Options;
+using DepartmentLocationConfiguration.VisualBasic;
+using DepartmentLocationConfiguration.Extensions.Options;
 
 
 
@@ -25,7 +25,7 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new Microsoft.OpenApi.OpenApiInfo
+    c.SwaggerDoc("v1", new DepartmentLocationConfiguration.OpenApi.OpenApiInfo
     {
         Title = "API Documentation",
         Version = "v1",
@@ -42,7 +42,7 @@ builder.Services.AddControllers();
 // Configure routing options for Swagger compatibility
 builder.Services.Configure<RouteOptions>(options =>
 {
-    options.SetParameterPolicy<Microsoft.AspNetCore.Routing.Constraints.RegexInlineRouteConstraint>("regex");
+    options.SetParameterPolicy<DepartmentLocationConfiguration.AspNetCore.Routing.Constraints.RegexInlineRouteConstraint>("regex");
 });
 
 var app = builder.Build();
