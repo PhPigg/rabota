@@ -1,5 +1,6 @@
 using Domain.DepartmentContext;
 using Domain.DepartmentContext.ValueObject;
+using Domain.LocationContext;
 using Domain.Shared;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -23,6 +24,16 @@ public class DepartmentConfiguration : IEntityTypeConfiguration<Department>
             y.Property(a => a.UpdatedAt).HasColumnName("UpdatedAt").IsRequired(false);
             y.Property(a => a.DeletedAt).HasColumnName("DeletedAt").IsRequired(false);
         });
-        throw new NotImplementedException();
+        builder.HasMany<DepartmentLocation>(x => x.Locations)
+            .WithOne(x => x.Department)
+            .HasForeignKey(x => x.DepartmentId)
+            .IsRequired().OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany<DepartmentPosition>(x => x.Positions)
+            .WithOne(x => x.Department)
+            .HasForeignKey(x => x.DepartmentId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Cascade);
+        builder.HasIndex(x => x.Name)
+            .IsUnique();
     }
 }

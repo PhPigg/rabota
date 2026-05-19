@@ -3,6 +3,7 @@ using Domain.PositionsContext.ValueObjects;
 using Domain.Shared;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Domain.DepartmentContext;
 
 namespace Infostructure.ModelConfiguration;
 
@@ -21,6 +22,12 @@ public class PositionConfiguration : IEntityTypeConfiguration<Position>
             y.Property(a => a.UpdatedAt).HasColumnName("UpdatedAt").IsRequired(false);
             y.Property(a => a.DeletedAt).HasColumnName("DeletedAt").IsRequired(false);
         });
-        throw new NotImplementedException();
+        builder.HasMany<DepartmentPosition>(x => x.Departments)
+            .WithOne(x => x.Position)
+            .HasForeignKey(x => x.PositionId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Cascade);
+        builder.HasIndex(x => x.Name)
+            .IsUnique();
     }
 }

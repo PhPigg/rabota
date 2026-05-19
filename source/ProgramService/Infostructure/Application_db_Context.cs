@@ -3,6 +3,7 @@ using Microsoft.Extensions.Options;
 using Domain.PositionsContext;
 using Domain.DepartmentContext;
 using Domain.LocationContext;
+using System.Reflection;
 
 namespace Infostructure;
 
@@ -13,9 +14,19 @@ public class Application_db_Context : DbContext
     {
         options = opion;
     }
+    public DbSet<Department> Departments => Set<Department>();
+    public DbSet<Position> Positions => Set<Position>();
+    public DbSet<Location> Locations => Set<Location>();
+    public DbSet<DepartmentPosition> DepartmentPositions => Set<DepartmentPosition>();
+    public DbSet<DepartmentLocation> DepartmentLocations => Set<DepartmentLocation>();
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-       optionsBuilder.UseNpgsql(options.Value.ToConnectionString());
+        optionsBuilder.UseNpgsql(options.Value.ToConnectionString());
+    }
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        Assembly assembly = typeof(Application_db_Context).Assembly;
+        modelBuilder.ApplyConfigurationsFromAssembly(assembly);
     }
 
 }

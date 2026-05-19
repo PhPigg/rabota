@@ -1,5 +1,7 @@
 using Domain.LocationContext;
 using Domain.LocationContext.ValueObjects;
+using Domain.DepartmentContext;
+using Domain.DepartmentContext.ValueObject;
 using Domain.Shared;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -21,9 +23,17 @@ public class LocationConfiguration : IEntityTypeConfiguration<Location>
             y.Property(a => a.UpdatedAt).HasColumnName("UpdatedAt").IsRequired(false);
             y.Property(a => a.DeletedAt).HasColumnName("DeletedAt").IsRequired(false);
         });
-    
-
-        throw new NotImplementedException();
+        builder.ComplexProperty(x => x.LifeTime, y => {
+            y.Property(a => a.CreatedAt).HasColumnName("CreatedAt");
+            y.Property(a => a.UpdatedAt).HasColumnName("UpdatedAt").IsRequired(false);
+            y.Property(a => a.DeletedAt).HasColumnName("DeletedAt").IsRequired(false);
+        });
+        builder.HasMany<DepartmentLocation>(x => x.Departments)
+            .WithOne(x => x.Location)
+            .HasForeignKey(x => x.LocationId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Cascade);
+        builder.HasIndex(x => x.Name)
+           .IsUnique();
     }
-    
 }

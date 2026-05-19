@@ -12,23 +12,10 @@ public class DepartmentLocationConfiguration : IEntityTypeConfiguration<Departme
     public void Configure(EntityTypeBuilder<DepartmentLocation> builder)
     {
         builder.ToTable("DepartmentLocations");
-    
         // Составной первичный ключ
         builder.HasKey(x => new { x.DepartmentId, x.LocationId });
-        
         // Конфигурация свойств-идентификаторов
         builder.Property(x => x.DepartmentId).HasColumnName("DepartmentId").HasConversion(x => x.Value, y => DepartmentId.Create(y));
         builder.Property(x => x.LocationId).HasColumnName("LocationId").HasConversion(x => x.Value, y => LocationId.Create(y));
-        
-        // Конфигурация отношений
-        builder.HasOne(x => x.Department)
-            .WithMany(x => x.Locations)
-            .HasForeignKey(x => x.DepartmentId)
-            .OnDelete(DeleteBehavior.Cascade);
-        
-        builder.HasOne(x => x.Location)
-            .WithMany()
-            .HasForeignKey(x => x.LocationId)
-            .OnDelete(DeleteBehavior.Cascade);
     }
 }

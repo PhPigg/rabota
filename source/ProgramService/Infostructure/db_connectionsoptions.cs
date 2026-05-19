@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+
 namespace Infostructure;
 
 public class db_connectionsoptions
@@ -37,5 +39,6 @@ public class db_connectionsoptions
         }
         string format = "Host={0};Port={1};Username={2};Password={3};Database={4};";
         return string.Format(format, host, port, username, password, database);
+        
     }
 }
