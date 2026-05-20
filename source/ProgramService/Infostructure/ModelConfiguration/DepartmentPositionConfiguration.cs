@@ -14,7 +14,9 @@ public class DepartmentPositionConfiguration : IEntityTypeConfiguration<Departme
         // Составной первичный ключ
         builder.HasKey(x => new { x.DepartmentId, x.PositionId });
         // Конфигурация свойств-идентификаторов
-        builder.Property(x => x.DepartmentId).HasColumnName("DepartmentId").HasConversion(x => x.Value, y => DepartmentId.Create(y));
-        builder.Property(x => x.PositionId).HasColumnName("PositionId").HasConversion(x => x.Value, y => PositionId.Create(y));
+        builder.Property(x => x.DepartmentId).HasColumnName("DepartmentId")
+            .HasConversion(x => x.Value, y => DepartmentId.Create(y));
+        builder.Property(x => x.PositionId).HasColumnName("PositionId")
+            .HasConversion(x => x.Value, y => PositionId.Create(y));
     }
 }

@@ -9,6 +9,7 @@ namespace Infostructure.ModelConfiguration;
 
 public class DepartmentConfiguration : IEntityTypeConfiguration<Department>
 {
+    
     public void Configure(EntityTypeBuilder<Department> builder)
     {
         builder.ToTable("Departments");

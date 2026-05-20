@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Domain.PositionsContext;
 using Domain.DepartmentContext;
+using Domain.DepartmentContext.ValueObject;
 using Domain.LocationContext;
 using System.Reflection;
 
@@ -25,6 +26,9 @@ public class Application_db_Context : DbContext
     }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        // Регистрация DepartmentId как owned type
+        modelBuilder.Owned<DepartmentId>();
+        
         Assembly assembly = typeof(Application_db_Context).Assembly;
         modelBuilder.ApplyConfigurationsFromAssembly(assembly);
     }

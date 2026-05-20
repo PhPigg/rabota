@@ -13,6 +13,10 @@ namespace Domain.DepartmentContext
             DepartmentId = department.Id;
             LocationId = location.Id;
         }
+        private DepartmentLocation()
+        {
+            
+        }
 
         //департамент, ответственный за локацию
         public DepartmentId DepartmentId { get; }

@@ -44,7 +44,7 @@ public sealed record EntityLifeTime
      * <param name="isActive">Текущий статус активности.</param>
      */
     private EntityLifeTime(
-        DateTime createdAt, 
+        DateTime createdAt,
         DateTime? updatedAt = null,
         DateTime? deletedAt = null,
         bool isActive = true)
@@ -53,6 +53,11 @@ public sealed record EntityLifeTime
         UpdatedAt = updatedAt;
         DeletedAt = deletedAt;
         IsActive = isActive;
+    }
+    
+    private EntityLifeTime()
+    {
+        
     }
 
     /**

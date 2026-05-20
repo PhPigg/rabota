@@ -1,10 +1,10 @@
-using DepartmentLocationConfiguration.AspNetCore.Mvc;
 using Domain.PositionsContext;
 using Domain.PositionsContext.ValueObjects;
 using Domain.Shared;
 using Domain.InMemory;
 using static Domain.PositionsContext.ValueObjects.PositionDescription;
 using Asp.NET;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Asp.NET.Controllers;
 

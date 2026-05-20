@@ -1,4 +1,3 @@
-using DepartmentLocationConfiguration.AspNetCore.Mvc;
 using Domain.LocationContext;
 using Domain.LocationContext.ValueObjects;
 using Domain.Shared;
@@ -6,6 +5,7 @@ using Domain.InMemory;
 using static Domain.LocationContext.ValueObjects.LocationAddress;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using Asp.NET;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Asp.NET.Controllers;
 

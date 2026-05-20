@@ -41,6 +41,11 @@ public class Position : ILifeTimeable
         LifeTime = lifeTime;
     }
 
+    private Position()
+    {
+        
+    }
+
     /**
      * <summary>
      * Получает уникальный идентификатор данной должности.

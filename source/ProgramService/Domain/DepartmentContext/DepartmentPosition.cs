@@ -14,6 +14,10 @@ namespace Domain.DepartmentContext
             PositionId = position.Id;
         }
 
+        private DepartmentPosition()
+        {
+            
+        }
         //департамент, ответственный за должность
         public DepartmentId DepartmentId { get; }
         public Department Department { get; }

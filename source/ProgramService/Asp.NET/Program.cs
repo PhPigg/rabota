@@ -1,5 +1,4 @@
 using System.Text.Json.Serialization;
-using DepartmentLocationConfiguration.AspNetCore.Http.HttpResults;
 using Domain.InMemory;
 using Domain.LocationContext;
 using Domain.LocationContext.ValueObjects;
@@ -8,8 +7,7 @@ using Domain.PositionsContext.ValueObjects;
 using Domain.Shared;
 using Asp.NET;
 using Infostructure;
-using DepartmentLocationConfiguration.VisualBasic;
-using DepartmentLocationConfiguration.Extensions.Options;
+
 
 
 
@@ -23,15 +21,7 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 
 // Add Swagger services
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new DepartmentLocationConfiguration.OpenApi.OpenApiInfo
-    {
-        Title = "API Documentation",
-        Version = "v1",
-        Description = "API для управления локациями и должностями"
-    });
-});
+builder.Services.AddSwaggerGen();
 
 
 builder.Services.AddOptions<db_connectionsoptions>().BindConfiguration("db_connectionsoptions");
@@ -39,16 +29,10 @@ builder.Services.AddOptions<db_connectionsoptions>().BindConfiguration("db_conne
 // Add controllers
 builder.Services.AddControllers();
 
-// Configure routing options for Swagger compatibility
-builder.Services.Configure<RouteOptions>(options =>
-{
-    options.SetParameterPolicy<DepartmentLocationConfiguration.AspNetCore.Routing.Constraints.RegexInlineRouteConstraint>("regex");
-});
+
 
 var app = builder.Build();
-using var scope = app.Services.CreateScope();
-var options = scope.ServiceProvider.GetRequiredService<IOptions<db_connectionsoptions>>();
-Console.WriteLine($"{options.Value.host}\n{options.Value.username}\n{options.Value.password}\n{options.Value.database}\n{options.Value.port}");
+
 
 
 // Configure Swagger middleware (must be before UseRouting and MapControllers)

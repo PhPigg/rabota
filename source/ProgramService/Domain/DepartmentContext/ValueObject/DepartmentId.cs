@@ -21,6 +21,8 @@ public record DepartmentId
     {
         Value = value;
     }
+    private DepartmentId()
+    { }
 
     /**
      * <summary>

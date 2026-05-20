@@ -45,6 +45,10 @@ public class Location : ILifeTimeable
         LifeTime = lifeTime;
         TimeZone = timeZone;
     }
+    private Location()
+    {
+        
+    }
 
     /** <summary>Получает уникальный системный идентификатор локации.</summary> */
     public LocationId Id { get; }
