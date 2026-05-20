@@ -41,6 +41,11 @@ public class Position : ILifeTimeable
         LifeTime = lifeTime;
     }
 
+    private Position()
+    {
+        
+    }
+
     /**
      * <summary>
      * Получает уникальный идентификатор данной должности.
@@ -69,7 +74,7 @@ public class Position : ILifeTimeable
      */
     public EntityLifeTime LifeTime { get; set; }
 
-    
+    public ICollection<DepartmentPosition> Departments { get; set; }
 
     //метод для проверки уникальности названия
     public void ChangePositionName(IPositionNameUniquenessCriteria criteria, NotEmptyName other)

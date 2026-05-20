@@ -1,5 +1,4 @@
 using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Domain.InMemory;
 using Domain.LocationContext;
 using Domain.LocationContext.ValueObjects;
@@ -7,6 +6,11 @@ using Domain.PositionsContext;
 using Domain.PositionsContext.ValueObjects;
 using Domain.Shared;
 using Asp.NET;
+using Infostructure;
+
+
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,26 +21,19 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 
 // Add Swagger services
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new Microsoft.OpenApi.OpenApiInfo
-    {
-        Title = "API Documentation",
-        Version = "v1",
-        Description = "API для управления локациями и должностями"
-    });
-});
+builder.Services.AddSwaggerGen();
+
+
+builder.Services.AddOptions<db_connectionsoptions>().BindConfiguration("db_connectionsoptions");
 
 // Add controllers
 builder.Services.AddControllers();
 
-// Configure routing options for Swagger compatibility
-builder.Services.Configure<RouteOptions>(options =>
-{
-    options.SetParameterPolicy<Microsoft.AspNetCore.Routing.Constraints.RegexInlineRouteConstraint>("regex");
-});
+
 
 var app = builder.Build();
+
+
 
 // Configure Swagger middleware (must be before UseRouting and MapControllers)
 if (app.Environment.IsDevelopment())

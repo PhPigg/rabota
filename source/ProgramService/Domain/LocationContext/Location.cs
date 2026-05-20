@@ -1,5 +1,6 @@
 ﻿using Domain.LocationContext.ValueObjects;
 using Domain.Shared;
+using Domain.DepartmentContext;
 
 namespace Domain.LocationContext;
 
@@ -44,6 +45,10 @@ public class Location : ILifeTimeable
         LifeTime = lifeTime;
         TimeZone = timeZone;
     }
+    private Location()
+    {
+        
+    }
 
     /** <summary>Получает уникальный системный идентификатор локации.</summary> */
     public LocationId Id { get; }
@@ -60,6 +65,7 @@ public class Location : ILifeTimeable
     /** <summary>Получает часовой пояс локации.</summary> */
     public IanaTimeZone TimeZone { get; set; }
 
+    public ICollection<DepartmentLocation> Departments { get; set; }
     /**
      * <summary>
      * Фабричный метод для создания новой локации с автоматической генерацией ID и начального жизненного цикла.

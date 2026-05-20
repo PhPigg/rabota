@@ -1,10 +1,10 @@
-using Microsoft.AspNetCore.Mvc;
 using Domain.PositionsContext;
 using Domain.PositionsContext.ValueObjects;
 using Domain.Shared;
 using Domain.InMemory;
 using static Domain.PositionsContext.ValueObjects.PositionDescription;
 using Asp.NET;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Asp.NET.Controllers;
 
@@ -47,7 +47,7 @@ public class PositionsController : ControllerBase
         }
     }
 
-    // POST: api/positions
+    /* POST: api/positions
     [HttpPost]
     public ActionResult<Position> Create([FromBody] CreatePositionRequest request)
     {
@@ -76,7 +76,7 @@ public class PositionsController : ControllerBase
         {
             return Conflict(ex.Message);
         }
-    }
+    }*/
 
     // PUT: api/positions/{id}
     [HttpPut("{id}")]

@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Mvc;
 using Domain.LocationContext;
 using Domain.LocationContext.ValueObjects;
 using Domain.Shared;
@@ -6,6 +5,7 @@ using Domain.InMemory;
 using static Domain.LocationContext.ValueObjects.LocationAddress;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using Asp.NET;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Asp.NET.Controllers;
 
@@ -48,7 +48,7 @@ public class LocationsController : ControllerBase
         }
     }
 
-    // POST: api/locations
+    /* POST: api/locations
     [HttpPost]
     public ActionResult<Location> Create([FromBody] CreateLocationRequest request)
     {
@@ -72,7 +72,7 @@ public class LocationsController : ControllerBase
         {
             return Conflict(ex.Message);
         }
-    }
+    }*/
 
     // PUT: api/locations/{id}
     [HttpPut("{id}")]

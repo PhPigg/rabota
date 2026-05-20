@@ -45,7 +45,8 @@ public class Department : ILifeTimeable
         EntityLifeTime lifeTime,
         IEnumerable<DepartmentLocation>? Locations = null,
         IEnumerable<DepartmentPosition>? Positions = null
-    )    {
+    )
+    {
         Id = id;
         ParentId = parentId;
         Name = name;
@@ -55,6 +56,11 @@ public class Department : ILifeTimeable
         LifeTime = lifeTime;
         _locations = Locations is null ? [] : [.. Locations];
         _positions = Positions is null ? [] : [.. Positions];
+    }
+    
+    private Department()
+    {
+        
     }
 
     /**
