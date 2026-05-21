@@ -7,6 +7,12 @@ using Domain.PositionsContext.ValueObjects;
 using Domain.Shared;
 using Asp.NET;
 using Infostructure;
+using static System.Net.Mime.MediaTypeNames;
+using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.Options;
+using Microsoft.EntityFrameworkCore;
+using Asp.NET.Extension;
+
 
 
 
@@ -31,9 +37,10 @@ builder.Services.AddControllers();
 
 
 
-var app = builder.Build();
 
 
+WebApplication app = builder.Build();
+await app.BuildDatabase();
 
 // Configure Swagger middleware (must be before UseRouting and MapControllers)
 if (app.Environment.IsDevelopment())

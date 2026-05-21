@@ -3,4 +3,5 @@
   <Project Path="MyProject.Tests/MyProject.Tests.csproj" Id="1464fe4e-4b30-4610-9290-b0046097fb81"/>
   <Project Path="Asp.NET/Asp.NET.csproj"/>
   <Project Path="Infostructure/Infostructure.csproj"/>
+  <Project Path="Application/Application.csproj"/>
 </Solution>
