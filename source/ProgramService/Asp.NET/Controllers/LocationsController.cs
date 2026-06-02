@@ -1,10 +1,10 @@
+using Application;
+using Application.Location;
+using Asp.NET;
+using Domain.InMemory;
 using Domain.LocationContext;
 using Domain.LocationContext.ValueObjects;
 using Domain.Shared;
-using Domain.InMemory;
-using static Domain.LocationContext.ValueObjects.LocationAddress;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using Asp.NET;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Asp.NET.Controllers;
@@ -13,6 +13,13 @@ namespace Asp.NET.Controllers;
 [Route("api/[controller]")]
 public class LocationsController : ControllerBase
 {
+    private readonly RegisterLocationHandler _handler;
+
+    public LocationsController(RegisterLocationHandler handler)
+    {
+        _handler = handler;
+    }
+
     // GET: api/locations
     [HttpGet]
     public ActionResult<IEnumerable<Location>> GetAll()
@@ -48,21 +55,22 @@ public class LocationsController : ControllerBase
         }
     }
 
-    /* POST: api/locations
+    // POST: api/locations
     [HttpPost]
-    public ActionResult<Location> Create([FromBody] CreateLocationRequest request)
+    public async Task<ActionResult<Guid>> Create(
+        [FromBody] CreateLocationRequest request,
+        CancellationToken ct = default)
     {
         try
         {
-            var name = NotEmptyName.Create(request.Name);
-            var address = LocationAddress.Create(request.Address);
-            var timeZone = IanaTimeZone.Create(request.TimeZone);
-            var criteria = new LocationUniquenessCriteria();
+            var command = new RegisterLocationCommand(
+                new[] { request.Name },
+                request.Address,
+                request.TimeZone
+            );
+            var locationId = await _handler.Handle(command, ct);
             
-            var location = Location.CreateNew(criteria, address, timeZone, name);
-            InMemoryLocationRepository.Add(location, criteria);
-            
-            return Ok(new LocationResponse(location.Name.Value, location.Address.Value, location.TimeZone.Value, location.LifeTime.CreatedAt, location.LifeTime.UpdatedAt, location.LifeTime.DeletedAt, location.LifeTime.IsActive));
+            return CreatedAtAction(nameof(GetById), new { id = locationId }, locationId);
         }
         catch (ArgumentException ex)
         {
@@ -72,7 +80,7 @@ public class LocationsController : ControllerBase
         {
             return Conflict(ex.Message);
         }
-    }*/
+    }
 
     // PUT: api/locations/{id}
     [HttpPut("{id}")]

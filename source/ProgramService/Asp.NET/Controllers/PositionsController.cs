@@ -2,9 +2,10 @@ using Domain.PositionsContext;
 using Domain.PositionsContext.ValueObjects;
 using Domain.Shared;
 using Domain.InMemory;
-using static Domain.PositionsContext.ValueObjects.PositionDescription;
 using Asp.NET;
 using Microsoft.AspNetCore.Mvc;
+using Application.Position;
+using Application;
 
 namespace Asp.NET.Controllers;
 
@@ -12,6 +13,13 @@ namespace Asp.NET.Controllers;
 [Route("api/[controller]")]
 public class PositionsController : ControllerBase
 {
+    private readonly RegisterPositionHandler _handler;
+
+    public PositionsController(RegisterPositionHandler handler)
+    {
+        _handler = handler;
+    }
+
     // GET: api/positions
     [HttpGet]
     public ActionResult<IEnumerable<Position>> GetAll()
@@ -47,26 +55,18 @@ public class PositionsController : ControllerBase
         }
     }
 
-    /* POST: api/positions
+    // POST: api/positions
     [HttpPost]
-    public ActionResult<Position> Create([FromBody] CreatePositionRequest request)
+    public async Task<ActionResult<Guid>> Create(
+        [FromBody] CreatePositionRequest request,
+        CancellationToken ct = default)
     {
         try
         {
-            // Валидация входных данных
-            if (request == null)
-            {
-                return BadRequest("Запрос не может быть пустым.");
-            }
-
-            var name = NotEmptyName.Create(request.Name);
-            var description = PositionDescription.Create(request.Description);
-            var criteria = new PositionNameUniquenessCriteria();
+            var command = new RegisterPositionCommand(request.Name);
+            var positionId = await _handler.Handle(command, ct);
             
-            var position = Position.CreateNew(criteria, name, description);
-            InMemoryPositionRepository.Add(position, criteria);
-            
-            return CreatedAtAction(nameof(GetById), new { id = position.Id.Value }, position);
+            return CreatedAtAction(nameof(GetById), new { id = positionId }, positionId);
         }
         catch (ArgumentException ex)
         {
@@ -76,7 +76,7 @@ public class PositionsController : ControllerBase
         {
             return Conflict(ex.Message);
         }
-    }*/
+    }
 
     // PUT: api/positions/{id}
     [HttpPut("{id}")]
