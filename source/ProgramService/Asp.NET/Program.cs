@@ -1,17 +1,16 @@
 using System.Text.Json.Serialization;
 using Domain.InMemory;
-using Domain.LocationContext;
+using Domain.LocationContext.Repositories;
 using Domain.LocationContext.ValueObjects;
 using Domain.PositionsContext;
 using Domain.PositionsContext.ValueObjects;
+using Domain.PositionsContext.Repositories;
 using Domain.Shared;
 using Asp.NET;
 using Infostructure;
-using static System.Net.Mime.MediaTypeNames;
-using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.Extensions.Options;
-using Microsoft.EntityFrameworkCore;
+using Infostructure.Database;
 using Asp.NET.Extension;
+using Application;
 
 
 
@@ -34,6 +33,14 @@ builder.Services.AddOptions<db_connectionsoptions>().BindConfiguration("db_conne
 
 // Add controllers
 builder.Services.AddControllers();
+
+// Register repositories and handlers
+builder.Services.AddScoped<IPositionRepository, PositionRepository>();
+builder.Services.AddScoped<ILocationRepository, LocationRepository>();
+
+// Register Application handlers
+builder.Services.AddScoped<Application.Position.RegisterPositionHandler>();
+builder.Services.AddScoped<Application.Location.RegisterLocationHandler>();
 
 
 

@@ -107,6 +107,11 @@ public class Position : ILifeTimeable
         return new Position(id, name, description, lifeTime);
     }
 
+    public static Position CreateNew(IPositionNameUniquenessCriteria criteria, NotEmptyName name)
+    {
+        return CreateNew(criteria, name, PositionDescription.Create(string.Empty));
+    }
+
     
 
     private void UpDateTimeEdit()

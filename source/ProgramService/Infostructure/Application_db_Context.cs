@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Domain.PositionsContext;
+using Domain.PositionsContext.ValueObjects;
 using Domain.DepartmentContext;
 using Domain.DepartmentContext.ValueObject;
 using Domain.LocationContext;
@@ -26,8 +27,9 @@ public class Application_db_Context : DbContext
     }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // Регистрация DepartmentId как owned type
+        // Регистрация Value Objects как owned types
         modelBuilder.Owned<DepartmentId>();
+        modelBuilder.Owned<PositionId>();
         
         Assembly assembly = typeof(Application_db_Context).Assembly;
         modelBuilder.ApplyConfigurationsFromAssembly(assembly);

@@ -24,11 +24,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Domain\Domain.csproj" />
     <ProjectReference Include="..\Infostructure\Infostructure.csproj" />
+    <ProjectReference Include="..\Application\Application.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\ProgramService.Infostructure.PostgreSql.csproj" />
-    <ProjectReference Include="..\ProgramService.Application.csproj" />
-  </ItemGroup>
-  
 </Project>
