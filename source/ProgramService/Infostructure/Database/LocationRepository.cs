@@ -37,11 +37,13 @@ public class LocationRepository : ILocationRepository
         var location = await _context.Locations
             .FirstOrDefaultAsync(l => l.Id == id, cancellationToken);
         
-        if (location != null)
+        if (location == null)
         {
-            _context.Locations.Remove(location);
-            await _context.SaveChangesAsync(cancellationToken);
+            throw new InvalidOperationException("Локация не найдена.");
         }
+
+        _context.Locations.Remove(location);
+        await _context.SaveChangesAsync(cancellationToken);
     }
 
     public async Task<Location?> GetByIdAsync(LocationId id, CancellationToken cancellationToken = default)

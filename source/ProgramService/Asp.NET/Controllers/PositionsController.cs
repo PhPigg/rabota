@@ -14,10 +14,14 @@ namespace Asp.NET.Controllers;
 public class PositionsController : ControllerBase
 {
     private readonly RegisterPositionHandler _handler;
+    private readonly DeletePositionsHandler _deleteHandler;
 
-    public PositionsController(RegisterPositionHandler handler)
+    public PositionsController(
+        RegisterPositionHandler handler,
+        DeletePositionsHandler deleteHandler)
     {
         _handler = handler;
+        _deleteHandler = deleteHandler;
     }
 
     // GET: api/positions
@@ -176,7 +180,29 @@ public class PositionsController : ControllerBase
             return BadRequest(ex.Message);
         }
     }
+
+    // DELETE: api/positions (bulk delete)
+    [HttpPost("delete-many")]
+    public async Task<ActionResult> DeleteMany([FromBody] DeletePositionsRequest request, CancellationToken ct = default)
+    {
+        try
+        {
+            var command = new DeletePositionsCommand(request.Ids);
+            await _deleteHandler.Handle(command, ct);
+            
+            return NoContent();
+        }
+        catch (InvalidOperationException ex)
+        {
+            return NotFound(ex.Message);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
 }
 
 public record CreatePositionRequest(string Name, string Description);
 public record UpdatePositionRequest(string Name);
+public record DeletePositionsRequest(Guid[] Ids);

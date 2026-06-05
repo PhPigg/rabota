@@ -89,4 +89,25 @@ public interface IPositionRepository
      * <returns>True, если должность с таким названием существует.</returns>
      */
     Task<bool> ExistsByNameAsync(NotEmptyName name, CancellationToken cancellationToken = default);
+
+    /**
+     * <summary>
+     * Получает несколько должностей по массиву идентификаторов.
+     * </summary>
+     * <param name="ids">Массив идентификаторов должностей.</param>
+     * <param name="cancellationToken">Токен отмены операции.</param>
+     * <returns>Список должностей по переданным идентификаторам.</returns>
+     */
+    Task<IReadOnlyList<Position>> GetManyByIds(IEnumerable<PositionId> ids, CancellationToken cancellationToken = default);
+
+    /**
+     * <summary>
+     * Удаляет несколько должностей по массиву идентификаторов.
+     * </summary>
+     * <param name="ids">Массив идентификаторов должностей для удаления.</param>
+     * <param name="cancellationToken">Токен отмены операции.</param>
+     * <returns>Задача, представляющая асинхронную операцию.</returns>
+     * <exception cref="InvalidOperationException">Выбрасывается, если ни одна должность не найдена.</exception>
+     */
+    Task DeleteManyAsync(IEnumerable<PositionId> ids, CancellationToken cancellationToken = default);
 }

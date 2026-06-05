@@ -73,4 +73,27 @@ public class PositionRepository : IPositionRepository
         return await _context.Positions
             .AnyAsync(p => p.Name.Value == name.Value, cancellationToken);
     }
+
+    public async Task<IReadOnlyList<Position>> GetManyByIds(IEnumerable<PositionId> ids, CancellationToken cancellationToken = default)
+    {
+        return await _context.Positions
+            .Where(p => ids.Contains(p.Id))
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task DeleteManyAsync(IEnumerable<PositionId> ids, CancellationToken cancellationToken = default)
+    {
+        var idsList = ids.ToList();
+        var positions = await _context.Positions
+            .Where(p => idsList.Contains(p.Id))
+            .ToListAsync(cancellationToken);
+
+        if (positions.Count == 0)
+        {
+            throw new InvalidOperationException("Должности не найдены.");
+        }
+
+        _context.Positions.RemoveRange(positions);
+        await _context.SaveChangesAsync(cancellationToken);
+    }
 }

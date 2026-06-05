@@ -99,4 +99,15 @@ public interface ILocationRepository
      * <returns>True, если локация с таким адресом существует.</returns>
      */
     Task<bool> ExistsByAddressAsync(LocationAddress address, CancellationToken cancellationToken = default);
+
+    /**
+     * <summary>
+     * Удаляет локацию по идентификатору.
+     * </summary>
+     * <param name="id">Идентфикатор локации для удаления.</param>
+     * <param name="cancellationToken">Токен отмены операции.</param>
+     * <returns>Задача, представляющая асинхронную операцию.</returns>
+     * <exception cref="InvalidOperationException">Выбрасывается, если локация не найдена.</exception>
+     */
+    Task DeleteAsync(LocationId id, CancellationToken cancellationToken = default);
 }

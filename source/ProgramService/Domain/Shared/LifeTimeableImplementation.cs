@@ -1,42 +1,46 @@
 namespace Domain.Shared;
 
-
-public static class LifeTimeableExtensions
+public sealed record LifeTimeableImplementation
 {
-    extension(ILifeTimeable lifetimeable)
+    extension(ILifetimeable lifetimeable)
     {
 
         public void Update()
         {
 
-            lifetimeable.LifeTime = lifetimeable.LifeTime.Update();
+            lifetimable.Lifetime = lifetimeable.Lifetime.Update();
 
         }
 
         public void Archive()
         {
 
-            lifetimeable.LifeTime = lifetimeable.LifeTime.Archive();
+            lifetimable.Lifetime = lifetimeable.Lifetime.Archive();
 
         }
 
         public void Restore()
         {
 
-            lifetimeable.LifeTime = lifetimeable.LifeTime.Restore();
+            lifetimable.Lifetime = lifetimeable.Lifetime.Restore();
 
         }
 
         public void ThrowIfNotActive()
         {
 
-            if (lifetimeable.LifeTime.IsActive == false)
+            if (lifetimeable.IsActive == false)
             {
 
                 throw new InvalidOperationException("Запись находится в архиве");
 
             }
 
+        }
+
+        public void UpDateTimeEdit()
+        {
+            
         }
 
     }

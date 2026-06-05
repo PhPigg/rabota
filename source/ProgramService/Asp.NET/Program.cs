@@ -5,6 +5,7 @@ using Domain.LocationContext.ValueObjects;
 using Domain.PositionsContext;
 using Domain.PositionsContext.ValueObjects;
 using Domain.PositionsContext.Repositories;
+using Domain.DepartmentContext.Repositories;
 using Domain.Shared;
 using Asp.NET;
 using Infostructure;
@@ -37,10 +38,14 @@ builder.Services.AddControllers();
 // Register repositories and handlers
 builder.Services.AddScoped<IPositionRepository, PositionRepository>();
 builder.Services.AddScoped<ILocationRepository, LocationRepository>();
+builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
 
 // Register Application handlers
 builder.Services.AddScoped<Application.Position.RegisterPositionHandler>();
 builder.Services.AddScoped<Application.Location.RegisterLocationHandler>();
+builder.Services.AddScoped<Application.Department.DeleteDepartmentHandler>();
+builder.Services.AddScoped<Application.Position.DeletePositionsHandler>();
+builder.Services.AddScoped<Application.Location.DeleteLocationHandler>();
 
 
 

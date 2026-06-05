@@ -14,10 +14,14 @@ namespace Asp.NET.Controllers;
 public class LocationsController : ControllerBase
 {
     private readonly RegisterLocationHandler _handler;
+    private readonly DeleteLocationHandler _deleteHandler;
 
-    public LocationsController(RegisterLocationHandler handler)
+    public LocationsController(
+        RegisterLocationHandler handler,
+        DeleteLocationHandler deleteHandler)
     {
         _handler = handler;
+        _deleteHandler = deleteHandler;
     }
 
     // GET: api/locations
@@ -144,27 +148,18 @@ public class LocationsController : ControllerBase
 
     // DELETE: api/locations/{id} (soft delete / archive)
     [HttpDelete("{id}")]
-    public ActionResult<Location> Delete(Guid id)
+    public async Task<ActionResult> Delete(Guid id, CancellationToken ct = default)
     {
         try
         {
-            var locationId = LocationId.Create(id);
-            var location = InMemoryLocationRepository.GetById(locationId);
+            var command = new DeleteLocationCommand(id);
+            await _deleteHandler.Handle(command, ct);
             
-            if (location == null)
-            {
-                return NotFound();
-            }
-
-            if (!location.LifeTime.IsActive)
-            {
-                return NotFound();
-            }
-
-            // Архивация сущности
-            location.Archive();
-            
-            return Ok(location);
+            return NoContent();
+        }
+        catch (InvalidOperationException ex)
+        {
+            return NotFound(ex.Message);
         }
         catch (ArgumentException ex)
         {
